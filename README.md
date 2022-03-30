@@ -1,4 +1,4 @@
-<img src="https://kuliahdimana.id/public/beasiswa/114966180083e888c1a6a6b89683f2dd.jpg" width="100" height="100">
+<img src="https://github.com/asrofilfachrulr/Final-Project---JCC-Golang-2022/blob/main/logo.png" width="100" height="100">
 
 # Final Project Kelas Backend Golang 
 
