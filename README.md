@@ -1,4 +1,4 @@
-<img src="https://github.com/asrofilfachrulr/Final-Project---JCC-Golang-2022/blob/main/logo.png" width="100" height="100">
+![Logo JCC](https://github.com/asrofilfachrulr/Final-Project---JCC-Golang-2022/blob/main/logo.png)
 
 # Final Project Kelas Backend Golang 
 
