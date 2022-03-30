@@ -25,7 +25,7 @@ Auth | Bearer Token: JWT | [link](https://jwt.io/)
 ## TODO Project 
 
 ### Todo dari trainer:
-- [ ] Wajib di deploy di heroku - 10 poin
+- [x] Wajib di deploy di heroku - 10 poin
 - [ ] Database harus SQL dan wajib menggunakan relasi database (lampirkan skema databasenya dan file sqlnya di repository) - 20 poin 
 - [ ] Terdapat fitur register, login, ganti password dan wajib memiliki JWT Auth Middleware - 20 poin
 - [ ] Wajib ada interaksi user dengan tema terkait - 20 poin
