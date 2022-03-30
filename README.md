@@ -1,5 +1,4 @@
-![Logo JCC](https://kuliahdimana.id/public/beasiswa/114966180083e888c1a6a6b89683f2dd.jpg =100x100)
-![Logo Golang](https://academy.alterra.id/blog/wp-content/uploads/2021/07/Logo-Golang.png =100x100)
+<img src="https://kuliahdimana.id/public/beasiswa/114966180083e888c1a6a6b89683f2dd.jpg" width="100" height="100">
 
 # Final Project Kelas Backend Golang 
 
