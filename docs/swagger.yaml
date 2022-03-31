@@ -1,4 +1,25 @@
 definitions:
+  controllers.LoginInput:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  controllers.LoginResp:
+    properties:
+      message:
+        type: string
+      status:
+        type: string
+      token:
+        type: string
+      user:
+        type: string
+    type: object
   controllers.RegisterInput:
     properties:
       email:
@@ -15,9 +36,42 @@ definitions:
     - password
     - username
     type: object
+  controllers.RegisterResp:
+    properties:
+      message:
+        type: string
+      user:
+        properties:
+          email:
+            type: string
+          username:
+            type: string
+        type: object
+    type: object
 info:
   contact: {}
 paths:
+  /login:
+    post:
+      description: Login as existing user with valid credentials. Success attempt
+        will return JWT token.
+      parameters:
+      - description: enter valid user's credential
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.LoginInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.LoginResp'
+      summary: Login with an existing user
+      tags:
+      - Auth
   /register:
     post:
       description: registering a new user
@@ -34,9 +88,8 @@ paths:
         "200":
           description: OK
           schema:
-            additionalProperties: true
-            type: object
-      summary: Register a user.
+            $ref: '#/definitions/controllers.RegisterResp'
+      summary: Register a user
       tags:
       - Auth
 swagger: "2.0"
