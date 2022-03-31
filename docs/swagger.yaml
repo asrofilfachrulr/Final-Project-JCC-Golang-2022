@@ -1,4 +1,14 @@
 definitions:
+  controllers.ChangePwInput:
+    properties:
+      new_password:
+        type: string
+      password:
+        type: string
+    required:
+    - new_password
+    - password
+    type: object
   controllers.LoginInput:
     properties:
       password:
@@ -51,6 +61,34 @@ definitions:
 info:
   contact: {}
 paths:
+  /changepw:
+    post:
+      description: Attempt change password from an existing user
+      parameters:
+      - description: Entry existing user valid credentials and the new one.
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.ChangePwInput'
+      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_jwt_token_here>'''
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerToken: []
+      summary: change an existing user password
+      tags:
+      - Auth
   /login:
     post:
       description: Login as existing user with valid credentials. Success attempt

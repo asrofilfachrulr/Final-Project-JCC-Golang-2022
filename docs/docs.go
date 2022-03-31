@@ -16,6 +16,50 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/changepw": {
+            "post": {
+                "security": [
+                    {
+                        "BearerToken": []
+                    }
+                ],
+                "description": "Attempt change password from an existing user",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "change an existing user password",
+                "parameters": [
+                    {
+                        "description": "Entry existing user valid credentials and the new one.",
+                        "name": "Body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.ChangePwInput"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Authorization. How to input in swagger : 'Bearer \u003cinsert_your_jwt_token_here\u003e'",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/login": {
             "post": {
                 "description": "Login as existing user with valid credentials. Success attempt will return JWT token.",
@@ -80,6 +124,21 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "controllers.ChangePwInput": {
+            "type": "object",
+            "required": [
+                "new_password",
+                "password"
+            ],
+            "properties": {
+                "new_password": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
         "controllers.LoginInput": {
             "type": "object",
             "required": [
