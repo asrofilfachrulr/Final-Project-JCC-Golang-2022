@@ -26,6 +26,23 @@ func GenerateToken(uid int) (string, error) {
 	return token.SignedString([]byte(os.Getenv("JWT_SECRET")))
 }
 
+// validate token
+func ValidateToken(c *gin.Context) error {
+	token := ExtractToken(c)
+	_, err := jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
+		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unknown signing method: %s", t.Header["alg"])
+		}
+		return []byte(os.Getenv("JWT_SECRET")), nil
+	})
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // extract token from query or authorization header
 func ExtractToken(c *gin.Context) string {
 	if token := c.Query("token"); token != "" {
