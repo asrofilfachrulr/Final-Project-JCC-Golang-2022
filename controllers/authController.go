@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"anya-day/models"
+	"anya-day/token"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -118,10 +119,17 @@ func Login(c *gin.Context) {
 		return
 	}
 
+	t, err := token.GenerateToken(uc.ID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "server crashed when creating your token",
+		})
+	}
+
 	c.JSON(http.StatusOK, LoginResp{
 		Status:  "success",
 		Message: "berhasil login",
 		User:    input.Username,
-		Token:   "",
+		Token:   t,
 	})
 }
