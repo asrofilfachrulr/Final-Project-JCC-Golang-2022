@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	if env := utils.Getenv("ENVIRONMENT", "development"); env == "development" {
+	if env := utils.GetEnvWithFallback("ENVIRONMENT", "development"); env == "development" {
 		err := godotenv.Load()
 		if err != nil {
 			panic(err.Error())
@@ -27,7 +27,7 @@ func main() {
 	docs.SwaggerInfo.Title = "Anya Day API"
 	docs.SwaggerInfo.Description = "API provide backend service for your ecommerce app"
 	docs.SwaggerInfo.Version = "1.0"
-	docs.SwaggerInfo.Host = utils.Getenv("SWAGGER_HOST", "localhost:8080")
+	docs.SwaggerInfo.Host = utils.GetEnvWithFallback("SWAGGER_HOST", "localhost:8080")
 	docs.SwaggerInfo.Schemes = []string{"http", "https"}
 
 	r := routes.InitRoute(db)

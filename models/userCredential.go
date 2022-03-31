@@ -46,5 +46,6 @@ func (uc *UserCredential) AttemptLogin(db *gorm.DB) error {
 		return err
 	}
 
+	uc.ID = realUC.ID
 	return nil
 }

@@ -14,7 +14,7 @@ func InitRoute(db *gorm.DB) *gin.Engine {
 	r := gin.Default()
 
 	r.GET("/", func(ctx *gin.Context) {
-		ctx.Data(200, "text/plain", []byte(utils.Getenv("HELLO", "hello")))
+		ctx.Data(200, "text/plain", []byte(utils.GetEnvWithFallback("HELLO", "hello")))
 	})
 
 	r.Use(func(c *gin.Context) {
