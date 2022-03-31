@@ -2,6 +2,7 @@ package routes
 
 import (
 	"anya-day/controllers"
+	"anya-day/middleware"
 	"anya-day/utils"
 
 	"github.com/gin-gonic/gin"
@@ -16,6 +17,7 @@ func InitRoute(db *gorm.DB) *gin.Engine {
 	r.GET("/", func(ctx *gin.Context) {
 		ctx.Data(200, "text/plain", []byte(utils.GetEnvWithFallback("HELLO", "hello")))
 	})
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	r.Use(func(c *gin.Context) {
 		c.Set("db", db)
@@ -24,10 +26,12 @@ func InitRoute(db *gorm.DB) *gin.Engine {
 	// auth
 	r.POST("/register", controllers.Register)
 	r.POST("/login", controllers.Login)
-	r.POST("/changepw", controllers.ChangePw)
+
+	m := r.Use(middleware.JWTAuthMiddleware())
+
+	m.POST("/changepw", controllers.ChangePw)
 
 	// swagger route
-	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	return r
 }
