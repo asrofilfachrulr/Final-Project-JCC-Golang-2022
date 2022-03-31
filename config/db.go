@@ -25,7 +25,10 @@ func ConnectDataBase() *gorm.DB {
 	if err != nil {
 		panic(err.Error())
 	}
+	// DROP PREVIOUS TABLES
+	db.Raw("DROP TABLE users, user_credentials CASCADE")
 
+	// migrate new tables
 	db.AutoMigrate(&models.User{}, &models.UserCredential{})
 
 	return db
