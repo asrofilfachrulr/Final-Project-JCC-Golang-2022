@@ -21,7 +21,9 @@ func InitRoute(db *gorm.DB) *gin.Engine {
 		c.Set("db", db)
 	})
 
+	// auth
 	r.POST("/register", controllers.Register)
+	r.POST("/login", controllers.Login)
 
 	// swagger route
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
