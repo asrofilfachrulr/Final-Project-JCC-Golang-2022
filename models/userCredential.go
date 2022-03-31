@@ -37,3 +37,14 @@ func (uc *UserCredential) SaveCredential(u *User, db *gorm.DB) error {
 
 	return nil
 }
+
+func (uc *UserCredential) AttemptLogin(db *gorm.DB) error {
+	realUC := &UserCredential{}
+	db.Where("username = ?", uc.Username).First(&realUC)
+
+	if err := bcrypt.CompareHashAndPassword([]byte(realUC.Password), []byte(uc.Password)); err != nil {
+		return err
+	}
+
+	return nil
+}
