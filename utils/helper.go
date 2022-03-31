@@ -1,10 +1,19 @@
 package utils
 
-import "os"
+import (
+	"os"
+	"strconv"
+)
 
-func Getenv(key, fallback string) string {
-	if value, ok := os.LookupEnv(key); ok {
+func GetEnvWithFallback(key, fallback string) string {
+	if value := os.Getenv(key); value != "" {
 		return value
 	}
 	return fallback
+}
+
+func StringToIntIgnore(s string) int {
+	n, _ := strconv.Atoi(s)
+
+	return n
 }
