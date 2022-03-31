@@ -28,7 +28,7 @@ func main() {
 	docs.SwaggerInfo.Description = "API provide backend service for your ecommerce app"
 	docs.SwaggerInfo.Version = "1.0"
 	docs.SwaggerInfo.Host = utils.Getenv("SWAGGER_HOST", "localhost:8080")
-	docs.SwaggerInfo.Schemes = []string{"https", "http"}
+	docs.SwaggerInfo.Schemes = []string{"http"}
 
 	r := routes.InitRoute(db)
 
