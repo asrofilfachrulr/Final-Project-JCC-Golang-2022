@@ -21,6 +21,10 @@ type (
 		FullName string `json:"full_name" binding:"required"`
 		Email    string `json:"email" binding:"required"`
 	}
+	ChangePwInput struct {
+		Password    string `json:"password" binding:"required"`
+		NewPassword string `json:"new_password" binding:"required"`
+	}
 
 	LoginResp struct {
 		Status  string `json:"status"`
@@ -119,11 +123,12 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	t, err := token.GenerateToken(uc.ID)
+	t, err := token.GenerateToken(uc.UserID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "server crashed when creating your token",
 		})
+		return
 	}
 
 	c.JSON(http.StatusOK, LoginResp{
@@ -131,5 +136,43 @@ func Login(c *gin.Context) {
 		Message: "berhasil login",
 		User:    input.Username,
 		Token:   t,
+	})
+}
+
+// Register godoc
+// @Summary change an existing user password
+// @Description  Attempt change password from an existing user
+// @Tags Auth
+// @Param Body body ChangePwInput true "Entry existing user valid credentials and the new one."
+// @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_jwt_token_here>'"
+// @Security BearerToken
+// @Produce json
+// @Success 200 {object} map[string]interface{}
+// @Router /changepw [post]
+func ChangePw(c *gin.Context) {
+	db := c.MustGet("db").(*gorm.DB)
+	input := &ChangePwInput{}
+
+	if err := c.ShouldBindJSON(input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	uc := &models.UserCredential{
+		Password: input.Password,
+	}
+
+	if err := uc.AttemptChangePw(input.NewPassword, db, c); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  "success",
+		"message": "berhasil mengganti password",
 	})
 }
