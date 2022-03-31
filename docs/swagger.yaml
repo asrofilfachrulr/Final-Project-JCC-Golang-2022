@@ -1,0 +1,42 @@
+definitions:
+  controllers.RegisterInput:
+    properties:
+      email:
+        type: string
+      full_name:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - email
+    - full_name
+    - password
+    - username
+    type: object
+info:
+  contact: {}
+paths:
+  /register:
+    post:
+      description: registering a new user
+      parameters:
+      - description: the body to register a user
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.RegisterInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Register a user.
+      tags:
+      - Auth
+swagger: "2.0"
