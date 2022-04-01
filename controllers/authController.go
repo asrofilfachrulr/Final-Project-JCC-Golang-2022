@@ -27,24 +27,23 @@ func Register(c *gin.Context) {
 		return
 	}
 
-	uc := &models.UserCredential{
-		Username: input.Username,
-		Password: input.Password,
-	}
-
 	u := &models.User{
 		Email:    input.Email,
 		Username: input.Username,
 		FullName: input.FullName,
 	}
 
-	uc.ConvToHash()
-
 	err := u.SaveUser(db)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
+	uc := &models.UserCredential{
+		Username: u.Username,
+		Password: input.Password,
+	}
+	uc.ConvToHash()
 
 	err = uc.SaveCredential(u, db)
 	if err != nil {
