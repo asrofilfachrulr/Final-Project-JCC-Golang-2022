@@ -37,7 +37,4 @@ Auth | Bearer Token: JWT | [link](https://jwt.io/)
 - [ ] Dokumentasi API - 20 poin
 
 ### Todo pribadi:
-- [ ] Menerapkan refresh token
-- [ ] Menerapkan refresh token rotation & token family
-- [ ] Menerapkan mailer / smtp
-- [ ] Menerapkan redis / server-side caching
+- [ ] Menerapkan mailer => mengirim email transaksi yang dibuat kepada user
