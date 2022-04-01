@@ -78,3 +78,23 @@ func ConnectDataBase() *gorm.DB {
 	return db
 
 }
+
+// adding dummies, developer and admin account base INIT_DB env etc
+func InitDB(db *gorm.DB, mode string) {
+	if mode == "USERS" {
+		// batch insert
+		users := []models.User{
+			{FullName: "John Doe", Username: "john", Email: "john@mail.com"},
+			{FullName: "Mary Sue", Username: "mary", Email: "mary@mail.com"},
+			{FullName: "Xi Ng", Username: "xi", Email: "nihaoma@mail.com"},
+		}
+		db.Create(&users)
+
+		userCredentials := []models.UserCredential{
+			{UserID: int(users[0].ID), Username: "john", Password: models.ConvToHash("john")},
+			{UserID: int(users[1].ID), Username: "mary", Password: models.ConvToHash("mary")},
+			{UserID: int(users[2].ID), Username: "xi", Password: models.ConvToHash("xi")},
+		}
+		db.Create(&userCredentials)
+	}
+}
