@@ -9,7 +9,8 @@ Candradimuka [Jabar Coding Camp](https://jabarcodingcamp.id/) 2022 - Batch 2
 #### Topic
 Ecommerce (benchmark tokopedia)    
 #### Schema  
-![DB Schema](https://github.com/asrofilfachrulr/Final-Project---JCC-Golang-2022/blob/main/db-schema.png)
+![DB Schema](https://github.com/asrofilfachrulr/Final-Project---JCC-Golang-2022/blob/main/db-schema.png)  
+klik pada gambar untuk memperbesar
 
 
 ## Stack Details  
