@@ -3,18 +3,16 @@ package models
 import (
 	"html"
 	"strings"
-	"time"
 
 	"gorm.io/gorm"
 )
 
 type (
 	User struct {
-		ID        uint      `json:"id" gorm:"primary_key;autoIncrement"`
-		FullName  string    `json:"full_name" gorm:"not null;"`
-		Username  string    `json:"username" gorm:"not null;unique"`
-		Email     string    `json:"email" gorm:"not null;unique"`
-		CreatedAt time.Time `json:"joined_at"`
+		gorm.Model
+		FullName string `json:"full_name" gorm:"not null;"`
+		Username string `json:"username" gorm:"not null;unique"`
+		Email    string `json:"email" gorm:"not null;unique"`
 	}
 )
 

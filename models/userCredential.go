@@ -3,7 +3,6 @@ package models
 import (
 	"anya-day/token"
 	"fmt"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
@@ -12,15 +11,23 @@ import (
 
 type (
 	UserCredential struct {
-		ID        int       `gorm:"primary_key;autoIncrement"`
-		UserID    int       `json:"user_id" gorm:"not null"`
-		Username  string    `json:"username" gorm:"not null"`
-		Password  string    `json:"password" gorm:"not null"`
-		CreatedAt time.Time `gorm:"not null"`
-		UpdatedAt time.Time `gorm:"not null"`
-		User      User      `gorm:"constraint:OnDelete:CASCADE;" json:"-"`
+		gorm.Model
+		UserID   int    `json:"user_id" gorm:"not null"`
+		Username string `json:"username" gorm:"not null"`
+		Password string `json:"password" gorm:"not null"`
+		User     User   `gorm:"constraint:OnDelete:CASCADE;" json:"-"`
 	}
 )
+
+// static form of *UserCredential.ConvToHash(), IGNORE ERROR!
+func ConvToHash(pw string) string {
+	//turn password into hash
+	hashedPassword, errPassword := bcrypt.GenerateFromPassword([]byte(pw), bcrypt.DefaultCost)
+	if errPassword != nil {
+		return ""
+	}
+	return string(hashedPassword)
+}
 
 func (uc *UserCredential) ConvToHash() error {
 	//turn password into hash
