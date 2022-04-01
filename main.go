@@ -38,6 +38,8 @@ func main() {
 	sqlDB, _ := db.DB()
 	defer sqlDB.Close()
 
+	config.Load(db)
+
 	// programmatically set swagger info
 	docs.SwaggerInfo.Title = "Anya Day API"
 	docs.SwaggerInfo.Description = "API provide backend service for your ecommerce app"
