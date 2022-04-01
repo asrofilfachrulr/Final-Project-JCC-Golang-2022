@@ -64,6 +64,7 @@ func Load(db *gorm.DB) {
 	userCredentials := &models.UserCredential{}
 	roles := &models.Role{}
 	countries := &models.Country{}
+	uaddr := &models.UserAddress{}
 
 	// DROP PREVIOUS TABLES
 	isDropped := false
@@ -78,6 +79,9 @@ func Load(db *gorm.DB) {
 		if db.Migrator().HasTable(roles) {
 			db.Migrator().DropTable(roles)
 		}
+		if db.Migrator().HasTable(uaddr) {
+			db.Migrator().DropTable(uaddr)
+		}
 		isDropped = true
 	}
 
@@ -90,16 +94,13 @@ func Load(db *gorm.DB) {
 		countries,
 		userCredentials,
 		roles,
+		uaddr,
 	)
-
-	// init static data, for now is only countries table
-	if db.Migrator().HasTable(&models.Country{}) {
-		InitStaticData(db)
-	}
 
 	// init dynamic, dummy, for testing purposes data
 	if isDropped {
 		InitDynamicData(db)
+		InitStaticData(db)
 	}
 
 }
