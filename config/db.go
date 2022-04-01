@@ -56,6 +56,7 @@ func ConnectDataBase() *gorm.DB {
 	// table models
 	users := &models.User{}
 	userCredentials := &models.UserCredential{}
+	roles := &models.Role{}
 
 	// DROP PREVIOUS TABLES
 	if mode := utils.GetEnvWithFallback("DROP_TABLES", "false"); mode == "DROP" {
@@ -66,6 +67,9 @@ func ConnectDataBase() *gorm.DB {
 		if db.Migrator().HasTable(userCredentials) {
 			db.Migrator().DropTable(userCredentials)
 		}
+		if db.Migrator().HasTable(roles) {
+			db.Migrator().DropTable(roles)
+		}
 	}
 
 	log.Println("[MIGRATION] AUTO MIGRATING TABLES")
@@ -73,6 +77,7 @@ func ConnectDataBase() *gorm.DB {
 	db.AutoMigrate(
 		users,
 		userCredentials,
+		roles,
 	)
 
 	return db
@@ -81,20 +86,45 @@ func ConnectDataBase() *gorm.DB {
 
 // adding dummies, developer and admin account base INIT_DB env etc
 func InitDB(db *gorm.DB, mode string) {
-	if mode == "USERS" {
+	initUserDummy := func() {
+		users := models.UsersDummy
 		// batch insert
-		users := []models.User{
-			{FullName: "John Doe", Username: "john", Email: "john@mail.com"},
-			{FullName: "Mary Sue", Username: "mary", Email: "mary@mail.com"},
-			{FullName: "Xi Ng", Username: "xi", Email: "nihaoma@mail.com"},
-		}
 		db.Create(&users)
 
-		userCredentials := []models.UserCredential{
-			{UserID: int(users[0].ID), Username: "john", Password: models.ConvToHash("john")},
-			{UserID: int(users[1].ID), Username: "mary", Password: models.ConvToHash("mary")},
-			{UserID: int(users[2].ID), Username: "xi", Password: models.ConvToHash("xi")},
+		for _, user := range users {
+			// create record for user_credentials tab;e
+			db.Create(&models.UserCredential{
+				UserID: int(user.ID), Username: user.Username, Password: models.ConvToHash(user.Username),
+			})
+
+			// create record for roles table
+			db.Create(&models.Role{
+				UserID: user.ID, Name: "customer",
+			})
 		}
-		db.Create(&userCredentials)
+	}
+
+	initDevAcc := func() {
+		usr := &models.User{
+			FullName: os.Getenv("DEV_FULLNM"),
+			Username: os.Getenv("DEV_USRNM"),
+			Email:    os.Getenv("DEV_MAIL"),
+		}
+		db.Create(usr)
+		db.Create(&models.UserCredential{
+			UserID:   int(usr.ID),
+			Username: usr.Username,
+			Password: models.ConvToHash(usr.Username),
+		})
+		db.Create(&models.Role{
+			UserID: usr.ID, Name: "dev",
+		})
+	}
+
+	if mode == "USERS_DEV" {
+		initUserDummy()
+		initDevAcc()
+	} else if mode == "USERS" {
+		initUserDummy()
 	}
 }
