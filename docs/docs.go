@@ -38,7 +38,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controllers.ChangePwInput"
+                            "$ref": "#/definitions/models.ChangePwInput"
                         }
                     },
                     {
@@ -77,7 +77,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controllers.LoginInput"
+                            "$ref": "#/definitions/models.LoginInput"
                         }
                     }
                 ],
@@ -85,7 +85,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/controllers.LoginResp"
+                            "$ref": "#/definitions/models.LoginResp"
                         }
                     }
                 }
@@ -108,7 +108,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controllers.RegisterInput"
+                            "$ref": "#/definitions/models.RegisterInput"
                         }
                     }
                 ],
@@ -116,7 +116,51 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/controllers.RegisterResp"
+                            "$ref": "#/definitions/models.RegisterResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/profile": {
+            "put": {
+                "security": [
+                    {
+                        "BearerToken": []
+                    }
+                ],
+                "description": "Change an existing user profile information which consists of email, fullname, and username. For address info, please visit anya-day.herokuapp.com/user/profile/address",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "change an existing user profile information.",
+                "parameters": [
+                    {
+                        "description": "Insert profile aspect need to be updated. Inserted value may lead to error for some reasons such updating to used username",
+                        "name": "Body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UpdateProfileInput"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Authorization. How to input in swagger : 'Bearer \u003cinsert_your_jwt_token_here\u003e'",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
                         }
                     }
                 }
@@ -124,7 +168,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "controllers.ChangePwInput": {
+        "models.ChangePwInput": {
             "type": "object",
             "required": [
                 "new_password",
@@ -139,7 +183,7 @@ const docTemplate = `{
                 }
             }
         },
-        "controllers.LoginInput": {
+        "models.LoginInput": {
             "type": "object",
             "required": [
                 "password",
@@ -154,7 +198,7 @@ const docTemplate = `{
                 }
             }
         },
-        "controllers.LoginResp": {
+        "models.LoginResp": {
             "type": "object",
             "properties": {
                 "message": {
@@ -171,7 +215,7 @@ const docTemplate = `{
                 }
             }
         },
-        "controllers.RegisterInput": {
+        "models.RegisterInput": {
             "type": "object",
             "required": [
                 "email",
@@ -194,7 +238,7 @@ const docTemplate = `{
                 }
             }
         },
-        "controllers.RegisterResp": {
+        "models.RegisterResp": {
             "type": "object",
             "properties": {
                 "message": {
@@ -210,6 +254,20 @@ const docTemplate = `{
                             "type": "string"
                         }
                     }
+                }
+            }
+        },
+        "models.UpdateProfileInput": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "full_name": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
                 }
             }
         }

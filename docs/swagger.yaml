@@ -1,5 +1,5 @@
 definitions:
-  controllers.ChangePwInput:
+  models.ChangePwInput:
     properties:
       new_password:
         type: string
@@ -9,7 +9,7 @@ definitions:
     - new_password
     - password
     type: object
-  controllers.LoginInput:
+  models.LoginInput:
     properties:
       password:
         type: string
@@ -19,7 +19,7 @@ definitions:
     - password
     - username
     type: object
-  controllers.LoginResp:
+  models.LoginResp:
     properties:
       message:
         type: string
@@ -30,7 +30,7 @@ definitions:
       user:
         type: string
     type: object
-  controllers.RegisterInput:
+  models.RegisterInput:
     properties:
       email:
         type: string
@@ -46,7 +46,7 @@ definitions:
     - password
     - username
     type: object
-  controllers.RegisterResp:
+  models.RegisterResp:
     properties:
       message:
         type: string
@@ -57,6 +57,15 @@ definitions:
           username:
             type: string
         type: object
+    type: object
+  models.UpdateProfileInput:
+    properties:
+      email:
+        type: string
+      full_name:
+        type: string
+      username:
+        type: string
     type: object
 info:
   contact: {}
@@ -70,7 +79,7 @@ paths:
         name: Body
         required: true
         schema:
-          $ref: '#/definitions/controllers.ChangePwInput'
+          $ref: '#/definitions/models.ChangePwInput'
       - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_jwt_token_here>'''
         in: header
         name: Authorization
@@ -99,14 +108,14 @@ paths:
         name: Body
         required: true
         schema:
-          $ref: '#/definitions/controllers.LoginInput'
+          $ref: '#/definitions/models.LoginInput'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/controllers.LoginResp'
+            $ref: '#/definitions/models.LoginResp'
       summary: Login with an existing user
       tags:
       - Auth
@@ -119,15 +128,45 @@ paths:
         name: Body
         required: true
         schema:
-          $ref: '#/definitions/controllers.RegisterInput'
+          $ref: '#/definitions/models.RegisterInput'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/controllers.RegisterResp'
+            $ref: '#/definitions/models.RegisterResp'
       summary: Register a user
       tags:
       - Auth
+  /user/profile:
+    put:
+      description: Change an existing user profile information which consists of email,
+        fullname, and username. For address info, please visit anya-day.herokuapp.com/user/profile/address
+      parameters:
+      - description: Insert profile aspect need to be updated. Inserted value may
+          lead to error for some reasons such updating to used username
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateProfileInput'
+      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_jwt_token_here>'''
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerToken: []
+      summary: change an existing user profile information.
+      tags:
+      - User
 swagger: "2.0"
