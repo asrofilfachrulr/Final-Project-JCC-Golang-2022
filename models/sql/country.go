@@ -1,10 +1,8 @@
 package models
 
-import "gorm.io/gorm"
-
 type (
 	Country struct {
-		gorm.Model
+		ID   uint   `gorm:"primary_key;autoIncrement"`
 		Name string `gorm:"not null"`
 	}
 )
