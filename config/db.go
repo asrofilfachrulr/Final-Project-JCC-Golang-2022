@@ -2,7 +2,9 @@ package config
 
 import (
 	"anya-day/models"
+	"anya-day/utils"
 	"fmt"
+	"log"
 	"os"
 
 	"gorm.io/driver/postgres"
@@ -25,11 +27,28 @@ func ConnectDataBase() *gorm.DB {
 	if err != nil {
 		panic(err.Error())
 	}
-	// DROP PREVIOUS TABLES
-	db.Raw("DROP TABLE users, user_credentials CASCADE")
 
+	// table models
+	users := &models.User{}
+	userCredentials := &models.UserCredential{}
+
+	// DROP PREVIOUS TABLES
+	if mode := utils.GetEnvWithFallback("DROP_TABLES", "false"); mode == "DROP" {
+		log.Println("[MIGRATION] DROPPING TABLES")
+		if db.Migrator().HasTable(users) {
+			db.Migrator().DropTable(users)
+		}
+		if db.Migrator().HasTable(userCredentials) {
+			db.Migrator().DropTable(userCredentials)
+		}
+	}
+
+	log.Println("[MIGRATION] AUTO MIGRATING TABLES")
 	// migrate new tables
-	db.AutoMigrate(&models.User{}, &models.UserCredential{})
+	db.AutoMigrate(
+		users,
+		userCredentials,
+	)
 
 	return db
 
