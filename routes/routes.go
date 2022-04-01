@@ -3,6 +3,7 @@ package routes
 import (
 	"anya-day/controllers"
 	"anya-day/middleware"
+	"anya-day/models"
 	"anya-day/utils"
 
 	"github.com/gin-gonic/gin"
@@ -21,6 +22,19 @@ func InitRoute(db *gorm.DB) *gin.Engine {
 
 	r.Use(func(c *gin.Context) {
 		c.Set("db", db)
+	})
+
+	// attach super user id to context
+	r.Use(func(c *gin.Context) {
+		var roles []models.Role
+		db.Where("name = ?", "dev").Find(&roles)
+
+		superMap := make(map[uint]string)
+		for _, u := range roles {
+			superMap[u.UserID] = u.Name
+		}
+
+		c.Set("super_map", superMap)
 	})
 
 	// auth
