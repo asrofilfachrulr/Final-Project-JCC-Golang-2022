@@ -1,10 +1,8 @@
 package models
 
 import (
-	"anya-day/token"
 	"fmt"
 
-	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
@@ -12,10 +10,10 @@ import (
 type (
 	UserCredential struct {
 		gorm.Model
-		UserID   int    `json:"user_id" gorm:"not null"`
-		Username string `json:"username" gorm:"not null"`
-		Password string `json:"password" gorm:"not null"`
-		User     User   `gorm:"constraint:OnDelete:CASCADE;" json:"-"`
+		UserID   int    `gorm:"not null"`
+		Username string `gorm:"not null"`
+		Password string `gorm:"not null"`
+		User     User   `gorm:"constraint:OnDelete:CASCADE;" `
 	}
 )
 
@@ -90,17 +88,9 @@ func (uc *UserCredential) CheckPasswordTwin(db *gorm.DB) bool {
 	return true
 }
 
-func (uc *UserCredential) AttemptChangePw(newPw string, db *gorm.DB, c *gin.Context) error {
-	// get user_id from jwt payload
-	uid, err := token.ExtractUID(c)
-	if err != nil {
-		return err
-	}
-
-	uc.UserID = int(uid)
-
+func (uc *UserCredential) AttemptChangePw(newPw string, db *gorm.DB) error {
 	// verify given old password by attempting login with user_id
-	err = uc.AttemptLogin(db)
+	err := uc.AttemptLogin(db)
 	if err != nil {
 		return err
 	}
