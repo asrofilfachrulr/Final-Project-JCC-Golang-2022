@@ -1,7 +1,7 @@
 package config
 
 import (
-	"anya-day/models"
+	models "anya-day/models/sql"
 	"anya-day/utils"
 	"fmt"
 	"log"
@@ -59,6 +59,7 @@ func ConnectDataBase() *gorm.DB {
 	roles := &models.Role{}
 
 	// DROP PREVIOUS TABLES
+	isDropped := false
 	if mode := utils.GetEnvWithFallback("DROP_TABLES", "false"); mode == "DROP" {
 		log.Println("[MIGRATION] DROPPING TABLES")
 		if db.Migrator().HasTable(users) {
@@ -70,6 +71,7 @@ func ConnectDataBase() *gorm.DB {
 		if db.Migrator().HasTable(roles) {
 			db.Migrator().DropTable(roles)
 		}
+		isDropped = true
 	}
 
 	log.Println("[MIGRATION] AUTO MIGRATING TABLES")
@@ -80,12 +82,17 @@ func ConnectDataBase() *gorm.DB {
 		roles,
 	)
 
+	// seeding if tables have been dropped
+	if isDropped {
+		InitDB(db)
+	}
+
 	return db
 
 }
 
 // adding dummies, developer and admin account base INIT_DB env etc
-func InitDB(db *gorm.DB, mode string) {
+func InitDB(db *gorm.DB) {
 	initUserDummy := func() {
 		users := models.UsersDummy
 		// batch insert
@@ -121,6 +128,8 @@ func InitDB(db *gorm.DB, mode string) {
 		})
 	}
 
+	mode := os.Getenv("INIT_DB")
+	log.Printf("mode init: %s\n", mode)
 	if mode == "USERS_DEV" {
 		initUserDummy()
 		initDevAcc()
