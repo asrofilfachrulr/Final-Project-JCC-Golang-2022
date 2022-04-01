@@ -31,6 +31,9 @@ func ConvToHash(pw string) string {
 
 func (uc *UserCredential) ConvToHash() error {
 	//turn password into hash
+	if len(uc.Password) < 5 {
+		return fmt.Errorf("password must be more than 5 characters")
+	}
 	hashedPassword, errPassword := bcrypt.GenerateFromPassword([]byte(uc.Password), bcrypt.DefaultCost)
 	if errPassword != nil {
 		return errPassword
