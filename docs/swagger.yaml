@@ -1,4 +1,37 @@
 definitions:
+  models.AddressInput:
+    properties:
+      address_line:
+        type: string
+      city:
+        type: string
+      country:
+        type: string
+      phone_number:
+        type: integer
+      postal_code:
+        type: integer
+    required:
+    - address_line
+    - city
+    - country
+    - phone_number
+    type: object
+  models.AddressRespData:
+    properties:
+      address:
+        type: string
+      city:
+        type: string
+      country:
+        type: string
+      number:
+        type: integer
+      postal_code:
+        type: integer
+      user_id:
+        type: integer
+    type: object
   models.ChangePwInput:
     properties:
       new_password:
@@ -67,37 +100,24 @@ definitions:
       username:
         type: string
     type: object
+  utils.NormalResp:
+    properties:
+      message:
+        type: string
+      success:
+        type: string
+    type: object
+  utils.RespWithData:
+    properties:
+      data: {}
+      message:
+        type: string
+      status:
+        type: string
+    type: object
 info:
   contact: {}
 paths:
-  /changepw:
-    post:
-      description: Attempt change password from an existing user
-      parameters:
-      - description: Entry existing user valid credentials and the new one.
-        in: body
-        name: Body
-        required: true
-        schema:
-          $ref: '#/definitions/models.ChangePwInput'
-      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_jwt_token_here>'''
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            additionalProperties: true
-            type: object
-      security:
-      - BearerToken: []
-      summary: change an existing user password
-      tags:
-      - Auth
   /login:
     post:
       description: Login as existing user with valid credentials. Success attempt
@@ -139,13 +159,75 @@ paths:
       summary: Register a user
       tags:
       - Auth
+  /user/address:
+    post:
+      description: Create fresh complete address of an existing user. If you want
+        to update just use the PUT instead which provides you only update what field
+        you like.
+      parameters:
+      - description: Insert new address, postal code isn't required.
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/models.AddressInput'
+      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_jwt_token_here>'''
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.RespWithData'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.AddressRespData'
+              type: object
+      security:
+      - BearerToken: []
+      summary: create complete address of an existing user.
+      tags:
+      - User
+  /user/changepw:
+    put:
+      description: Attempt change password from an existing user
+      parameters:
+      - description: Entry existing user valid credentials and the new one.
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/models.ChangePwInput'
+      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_jwt_token_here>'''
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.NormalResp'
+      security:
+      - BearerToken: []
+      summary: change an existing user password
+      tags:
+      - User
   /user/profile:
     put:
       description: Change an existing user profile information which consists of email,
-        fullname, and username. For address info, please visit anya-day.herokuapp.com/user/profile/address
+        fullname, and username. Email format following RFC 5322 format. For update
+        address info instead, please visit anya-day.herokuapp.com/user/profile/address
       parameters:
-      - description: Insert profile aspect need to be updated. Inserted value may
-          lead to error for some reasons such updating to used username
+      - description: Only insert profile aspect need to be updated. Inserted value
+          may lead to error for some reasons such updating to used username
         in: body
         name: Body
         required: true
@@ -162,8 +244,7 @@ paths:
         "200":
           description: OK
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/utils.NormalResp'
       security:
       - BearerToken: []
       summary: change an existing user profile information.

@@ -16,50 +16,6 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/changepw": {
-            "post": {
-                "security": [
-                    {
-                        "BearerToken": []
-                    }
-                ],
-                "description": "Attempt change password from an existing user",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Auth"
-                ],
-                "summary": "change an existing user password",
-                "parameters": [
-                    {
-                        "description": "Entry existing user valid credentials and the new one.",
-                        "name": "Body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.ChangePwInput"
-                        }
-                    },
-                    {
-                        "type": "string",
-                        "description": "Authorization. How to input in swagger : 'Bearer \u003cinsert_your_jwt_token_here\u003e'",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            }
-        },
         "/login": {
             "post": {
                 "description": "Login as existing user with valid credentials. Success attempt will return JWT token.",
@@ -122,6 +78,104 @@ const docTemplate = `{
                 }
             }
         },
+        "/user/address": {
+            "post": {
+                "security": [
+                    {
+                        "BearerToken": []
+                    }
+                ],
+                "description": "Create fresh complete address of an existing user. If you want to update just use the PUT instead which provides you only update what field you like.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "create complete address of an existing user.",
+                "parameters": [
+                    {
+                        "description": "Insert new address, postal code isn't required.",
+                        "name": "Body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.AddressInput"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Authorization. How to input in swagger : 'Bearer \u003cinsert_your_jwt_token_here\u003e'",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/utils.RespWithData"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.AddressRespData"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/user/changepw": {
+            "put": {
+                "security": [
+                    {
+                        "BearerToken": []
+                    }
+                ],
+                "description": "Attempt change password from an existing user",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "change an existing user password",
+                "parameters": [
+                    {
+                        "description": "Entry existing user valid credentials and the new one.",
+                        "name": "Body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ChangePwInput"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Authorization. How to input in swagger : 'Bearer \u003cinsert_your_jwt_token_here\u003e'",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/utils.NormalResp"
+                        }
+                    }
+                }
+            }
+        },
         "/user/profile": {
             "put": {
                 "security": [
@@ -129,7 +183,7 @@ const docTemplate = `{
                         "BearerToken": []
                     }
                 ],
-                "description": "Change an existing user profile information which consists of email, fullname, and username. For address info, please visit anya-day.herokuapp.com/user/profile/address",
+                "description": "Change an existing user profile information which consists of email, fullname, and username. Email format following RFC 5322 format. For update address info instead, please visit anya-day.herokuapp.com/user/profile/address",
                 "produces": [
                     "application/json"
                 ],
@@ -139,7 +193,7 @@ const docTemplate = `{
                 "summary": "change an existing user profile information.",
                 "parameters": [
                     {
-                        "description": "Insert profile aspect need to be updated. Inserted value may lead to error for some reasons such updating to used username",
+                        "description": "Only insert profile aspect need to be updated. Inserted value may lead to error for some reasons such updating to used username",
                         "name": "Body",
                         "in": "body",
                         "required": true,
@@ -159,8 +213,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/utils.NormalResp"
                         }
                     }
                 }
@@ -168,6 +221,55 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "models.AddressInput": {
+            "type": "object",
+            "required": [
+                "address_line",
+                "city",
+                "country",
+                "phone_number"
+            ],
+            "properties": {
+                "address_line": {
+                    "type": "string"
+                },
+                "city": {
+                    "type": "string"
+                },
+                "country": {
+                    "type": "string"
+                },
+                "phone_number": {
+                    "type": "integer"
+                },
+                "postal_code": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.AddressRespData": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "city": {
+                    "type": "string"
+                },
+                "country": {
+                    "type": "string"
+                },
+                "number": {
+                    "type": "integer"
+                },
+                "postal_code": {
+                    "type": "integer"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
         "models.ChangePwInput": {
             "type": "object",
             "required": [
@@ -267,6 +369,29 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "utils.NormalResp": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "string"
+                }
+            }
+        },
+        "utils.RespWithData": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "message": {
+                    "type": "string"
+                },
+                "status": {
                     "type": "string"
                 }
             }
