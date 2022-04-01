@@ -4,6 +4,7 @@ import (
 	"anya-day/config"
 	"anya-day/routes"
 	"anya-day/utils"
+	"os"
 
 	"anya-day/docs"
 
@@ -25,6 +26,9 @@ func main() {
 
 	sqlDB, _ := db.DB()
 	defer sqlDB.Close()
+
+	dummiesMode := os.Getenv("INIT_DB")
+	config.InitDB(db, dummiesMode)
 
 	// programmatically set swagger info
 	docs.SwaggerInfo.Title = "Anya Day API"
