@@ -1,7 +1,8 @@
 package controllers
 
 import (
-	"anya-day/models"
+	models "anya-day/models/sql"
+	wmodels "anya-day/models/web"
 	"anya-day/token"
 	"net/http"
 
@@ -9,49 +10,17 @@ import (
 	"gorm.io/gorm"
 )
 
-type (
-	LoginInput struct {
-		Username string `json:"username" binding:"required"`
-		Password string `json:"password" binding:"required"`
-	}
-
-	RegisterInput struct {
-		Username string `json:"username" binding:"required"`
-		Password string `json:"password" binding:"required"`
-		FullName string `json:"full_name" binding:"required"`
-		Email    string `json:"email" binding:"required"`
-	}
-	ChangePwInput struct {
-		Password    string `json:"password" binding:"required"`
-		NewPassword string `json:"new_password" binding:"required"`
-	}
-
-	LoginResp struct {
-		Status  string `json:"status"`
-		Message string `json:"message"`
-		User    string `json:"user"`
-		Token   string `json:"token"`
-	}
-	RegisterResp struct {
-		Message string `json:"message"`
-		User    struct {
-			Username string `json:"username"`
-			Email    string `json:"email"`
-		} `json:"user"`
-	}
-)
-
 // Register godoc
 // @Summary Register a user
 // @Description registering a new user
 // @Tags Auth
-// @Param Body body RegisterInput true "the body to register a user"
+// @Param Body body wmodels.RegisterInput true "the body to register a user"
 // @Produce json
-// @Success 200 {object} RegisterResp
+// @Success 200 {object} wmodels.RegisterResp
 // @Router /register [post]
 func Register(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
-	var input RegisterInput
+	var input wmodels.RegisterInput
 
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -96,13 +65,13 @@ func Register(c *gin.Context) {
 // @Summary Login with an existing user
 // @Description Login as existing user with valid credentials. Success attempt will return JWT token.
 // @Tags Auth
-// @Param Body body LoginInput true "enter valid user's credential"
+// @Param Body body wmodels.LoginInput true "enter valid user's credential"
 // @Produce json
-// @Success 200 {object} LoginResp
+// @Success 200 {object} wmodels.LoginResp
 // @Router /login [post]
 func Login(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
-	var input LoginInput
+	var input wmodels.LoginInput
 
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -131,7 +100,7 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, LoginResp{
+	c.JSON(http.StatusOK, wmodels.LoginResp{
 		Status:  "success",
 		Message: "berhasil login",
 		User:    input.Username,
@@ -143,7 +112,7 @@ func Login(c *gin.Context) {
 // @Summary change an existing user password
 // @Description  Attempt change password from an existing user
 // @Tags Auth
-// @Param Body body ChangePwInput true "Entry existing user valid credentials and the new one."
+// @Param Body body wmodels.ChangePwInput true "Entry existing user valid credentials and the new one."
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_jwt_token_here>'"
 // @Security BearerToken
 // @Produce json
@@ -151,7 +120,7 @@ func Login(c *gin.Context) {
 // @Router /changepw [post]
 func ChangePw(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
-	input := &ChangePwInput{}
+	input := &wmodels.ChangePwInput{}
 
 	if err := c.ShouldBindJSON(input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -160,11 +129,20 @@ func ChangePw(c *gin.Context) {
 		return
 	}
 
-	uc := &models.UserCredential{
-		Password: input.Password,
+	uid, err := token.ExtractUID(c)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
 	}
 
-	if err := uc.AttemptChangePw(input.NewPassword, db, c); err != nil {
+	uc := &models.UserCredential{
+		Password: input.Password,
+		UserID:   int(uid),
+	}
+
+	if err := uc.AttemptChangePw(input.NewPassword, db); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
 		})
