@@ -19,7 +19,7 @@ func NewLogger() logger.Interface {
 		logger.Config{
 			SlowThreshold:             time.Second, // Slow SQL threshold
 			LogLevel:                  logger.Info, // Log level
-			IgnoreRecordNotFoundError: true,        // Ignore ErrRecordNotFound error for logger
+			IgnoreRecordNotFoundError: false,       // Ignore ErrRecordNotFound error for logger
 			Colorful:                  true,        // Disable color
 		},
 	)
@@ -53,10 +53,17 @@ func ConnectDataBase() *gorm.DB {
 		panic(err.Error())
 	}
 
+	return db
+
+}
+
+// migration and seeding database
+func Load(db *gorm.DB) {
 	// table models
 	users := &models.User{}
 	userCredentials := &models.UserCredential{}
 	roles := &models.Role{}
+	countries := &models.Country{}
 
 	// DROP PREVIOUS TABLES
 	isDropped := false
@@ -76,23 +83,29 @@ func ConnectDataBase() *gorm.DB {
 
 	log.Println("[MIGRATION] AUTO MIGRATING TABLES")
 	// migrate new tables
+	// static ordered first
+	// independent ordered first
 	db.AutoMigrate(
 		users,
+		countries,
 		userCredentials,
 		roles,
 	)
 
-	// seeding if tables have been dropped
-	if isDropped {
-		InitDB(db)
+	// init static data, for now is only countries table
+	if db.Migrator().HasTable(&models.Country{}) {
+		InitStaticData(db)
 	}
 
-	return db
+	// init dynamic, dummy, for testing purposes data
+	if isDropped {
+		InitDynamicData(db)
+	}
 
 }
 
 // adding dummies, developer and admin account base INIT_DB env etc
-func InitDB(db *gorm.DB) {
+func InitDynamicData(db *gorm.DB) {
 	initUserDummy := func() {
 		users := models.UsersDummy
 		// batch insert
@@ -136,4 +149,26 @@ func InitDB(db *gorm.DB) {
 	} else if mode == "USERS" {
 		initUserDummy()
 	}
+
+}
+
+// add static data which likely rarely be updated or deleted, so the table won't be dropped
+func InitStaticData(db *gorm.DB) {
+	initCountry := func() {
+		aseanCoutries := []models.Country{
+			{Name: "Indonesia"},
+			{Name: "Singapore"},
+			{Name: "Malaysia"},
+			{Name: "Thailand"},
+			{Name: "Brunei"},
+			{Name: "Philipines"},
+			{Name: "Laos"},
+			{Name: "Vietnam"},
+			{Name: "Cambodia"},
+			{Name: "Myanmar"},
+		}
+		db.Create(&aseanCoutries)
+	}
+
+	initCountry()
 }
