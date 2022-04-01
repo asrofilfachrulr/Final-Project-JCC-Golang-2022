@@ -16,6 +16,9 @@ func main() {
 		if err != nil {
 			panic(err.Error())
 		}
+		docs.SwaggerInfo.Schemes = []string{"http"}
+	} else {
+		docs.SwaggerInfo.Schemes = []string{"https"}
 	}
 
 	db := config.ConnectDataBase()
@@ -28,7 +31,6 @@ func main() {
 	docs.SwaggerInfo.Description = "API provide backend service for your ecommerce app"
 	docs.SwaggerInfo.Version = "1.0"
 	docs.SwaggerInfo.Host = utils.GetEnvWithFallback("SWAGGER_HOST", "localhost:8080")
-	docs.SwaggerInfo.Schemes = []string{"http", "https"}
 
 	r := routes.InitRoute(db)
 
