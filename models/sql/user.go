@@ -21,6 +21,7 @@ type (
 func (u *User) SaveUser(db *gorm.DB) error {
 	//remove spaces in username
 	u.Username = html.EscapeString(strings.TrimSpace(u.Username))
+	u.Username = strings.ToLower(u.Username)
 
 	var err error = db.Create(&u).Error
 	if err != nil {
