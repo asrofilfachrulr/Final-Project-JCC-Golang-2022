@@ -12,6 +12,62 @@ import (
 )
 
 // Register godoc
+// @Summary create complete address of an existing user.
+// @Description Create fresh complete address of an existing user. If you want to update just use the PUT instead which provides you only update what field you like.
+// @Tags User
+// @Param Body body wmodels.AddressInput true "Insert new address, postal code isn't required."
+// @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_jwt_token_here>'"
+// @Security BearerToken
+// @Produce json
+// @Success 201 {object} utils.RespWithData{data=wmodels.AddressRespData}
+// @Router /user/address [post]
+func PostAddress(c *gin.Context) {
+	db := c.MustGet("db").(*gorm.DB)
+
+	uid, err := token.ExtractUID(c)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	var input wmodels.AddressInput
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	uaddr := &models.UserAddress{
+		UserID: uid,
+	}
+
+	if err := uaddr.PostAddress(db, &input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	data := wmodels.AddressRespData{
+		UserID:      uaddr.UserID,
+		AddressLine: uaddr.AddressLine,
+		City:        uaddr.City,
+		Country:     input.Country,
+		PhoneNumber: uaddr.PhoneNumber,
+		PostalCode:  uaddr.PostalCode,
+	}
+
+	c.JSON(http.StatusCreated, utils.RespWithData{
+		Status:  "success",
+		Message: "sukses menambahkan alamat",
+		Data:    data,
+	})
+}
+
+// Register godoc
 // @Summary change an existing user profile information.
 // @Description Change an existing user profile information which consists of email, fullname, and username. Email format following RFC 5322 format. For update address info instead, please visit anya-day.herokuapp.com/user/profile/address
 // @Tags User
@@ -19,7 +75,7 @@ import (
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_jwt_token_here>'"
 // @Security BearerToken
 // @Produce json
-// @Success 200 {object} map[string]interface{}
+// @Success 200 {object} utils.NormalResp
 // @Router /user/profile [put]
 func UpdateProfile(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
@@ -52,5 +108,52 @@ func UpdateProfile(c *gin.Context) {
 	c.JSON(http.StatusOK, utils.NormalResp{
 		Status:  "success",
 		Message: "berhasil memperbarui profile",
+	})
+}
+
+// Register godoc
+// @Summary change an existing user password
+// @Description  Attempt change password from an existing user
+// @Tags User
+// @Param Body body wmodels.ChangePwInput true "Entry existing user valid credentials and the new one."
+// @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_jwt_token_here>'"
+// @Security BearerToken
+// @Produce json
+// @Success 200 {object} utils.NormalResp
+// @Router /user/changepw [put]
+func ChangePw(c *gin.Context) {
+	db := c.MustGet("db").(*gorm.DB)
+	input := &wmodels.ChangePwInput{}
+
+	if err := c.ShouldBindJSON(input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	uid, err := token.ExtractUID(c)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	uc := &models.UserCredential{
+		Password: input.Password,
+		UserID:   int(uid),
+	}
+
+	if err := uc.AttemptChangePw(input.NewPassword, db); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, utils.NormalResp{
+		Status:  "success",
+		Message: "berhasil mengganti password",
 	})
 }
