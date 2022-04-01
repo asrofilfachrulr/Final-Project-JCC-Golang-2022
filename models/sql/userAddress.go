@@ -11,7 +11,7 @@ type (
 		AddressLine string  `gorm:"not null"`
 		City        string  `gorm:"not null"`
 		CountryID   uint    `gorm:"not null"`
-		PostalCode  uint    `gorm:"not null"`
 		PhoneNumber uint    `gorm:"not null"`
+		PostalCode  uint
 	}
 )
