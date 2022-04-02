@@ -120,6 +120,15 @@ definitions:
       username:
         type: string
     type: object
+  models.UserDataResp:
+    properties:
+      email:
+        type: string
+      fullname:
+        type: string
+      username:
+        type: string
+    type: object
   utils.NormalResp:
     properties:
       message:
@@ -267,10 +276,36 @@ paths:
       tags:
       - User
   /user/profile:
+    delete:
+      description: This request lead to removing all user's related data
+      parameters:
+      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_jwt_token_here>'''
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.RespWithData'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.UserDataResp'
+              type: object
+      security:
+      - BearerToken: []
+      summary: delete an existing user role
+      tags:
+      - User
     put:
       description: Change an existing user profile information which consists of email,
         fullname, and username. Email format following RFC 5322 format. For update
-        address info instead, please visit anya-day.herokuapp.com/user/profile/address
+        address info instead, please use PUT user/profile/address instead. This endpoint
+        has not POST method which same behaviour already handled by POST /register
       parameters:
       - description: Only insert profile aspect need to be updated. Inserted value
           may lead to error for some reasons such updating to used username

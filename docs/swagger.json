@@ -212,7 +212,7 @@
                         "BearerToken": []
                     }
                 ],
-                "description": "Change an existing user profile information which consists of email, fullname, and username. Email format following RFC 5322 format. For update address info instead, please visit anya-day.herokuapp.com/user/profile/address",
+                "description": "Change an existing user profile information which consists of email, fullname, and username. Email format following RFC 5322 format. For update address info instead, please use PUT user/profile/address instead. This endpoint has not POST method which same behaviour already handled by POST /register",
                 "produces": [
                     "application/json"
                 ],
@@ -243,6 +243,50 @@
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/utils.NormalResp"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerToken": []
+                    }
+                ],
+                "description": "This request lead to removing all user's related data",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "delete an existing user role",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authorization. How to input in swagger : 'Bearer \u003cinsert_your_jwt_token_here\u003e'",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/utils.RespWithData"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.UserDataResp"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -472,6 +516,20 @@
                     "type": "string"
                 },
                 "full_name": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.UserDataResp": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "fullname": {
                     "type": "string"
                 },
                 "username": {
