@@ -44,10 +44,14 @@ func InitRoute(db *gorm.DB) *gin.Engine {
 	user := r.Group("/user")
 	user.Use(middleware.JWTAuthMiddleware())
 	user.PUT("/changepw", controllers.ChangePw)
+
+	user.GET("/profile", controllers.GetCompleteUser)
 	user.PUT("/profile", controllers.UpdateProfile)
 	user.DELETE("/profile", controllers.DeleteUser)
+
 	user.POST("/address", controllers.PostAddress)
 	user.PUT("/address", controllers.UpdateAddress)
+
 	user.PATCH("/role", controllers.ChangeUserRole)
 
 	// swagger route

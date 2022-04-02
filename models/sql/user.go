@@ -2,6 +2,7 @@ package models
 
 import (
 	wmodels "anya-day/models/web"
+	"fmt"
 	"html"
 	"net/mail"
 	"strings"
@@ -17,6 +18,53 @@ type (
 		Email    string `gorm:"not null;unique"`
 	}
 )
+
+func (u *User) GetCompleteUser(db *gorm.DB, cu *wmodels.UserCompleteDataResp) (err error) {
+	defer func() {
+		if s := recover(); s != nil {
+			err = fmt.Errorf("%v", s)
+		}
+	}()
+
+	addr := &UserAddress{}
+	type Result struct {
+		Name string
+		Role string
+	}
+
+	res := &Result{}
+
+	err = db.Table("user_addresses ua").
+		Select("c.name, r.name role").
+		Joins("left join countries c on c.id = ua.country_id").
+		Joins("left join roles r on r.user_id = ua.user_id").
+		Where("ua.user_id = ?", u.ID).
+		Scan(res).Error
+
+	if err != nil {
+		return err
+	}
+
+	_u := &User{}
+	_u.ID = u.ID
+	db.First(_u)
+
+	db.Where("user_id = ?", u.ID).Find(addr)
+
+	cu.ID = _u.ID
+	cu.Username = _u.Username
+	cu.Email = _u.Email
+	cu.Fullname = _u.FullName
+	cu.Role = res.Role
+	cu.Address = wmodels.AddressRespData{
+		AddressLine: addr.AddressLine,
+		City:        addr.City,
+		Country:     res.Name,
+		PhoneNumber: addr.PhoneNumber,
+		PostalCode:  addr.PostalCode,
+	}
+	return nil
+}
 
 func (u *User) SaveUser(db *gorm.DB) error {
 	//remove spaces in username

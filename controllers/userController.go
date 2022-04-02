@@ -12,6 +12,40 @@ import (
 )
 
 // Register godoc
+// @Summary get complete profile of an existing user.
+// @Description Get complete details of logged user.
+// @Tags User
+// @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_jwt_token_here>'"
+// @Security BearerToken
+// @Produce json
+// @Success 200 {object} wmodels.UserCompleteDataResp
+// @Router /user/profile [GET]
+func GetCompleteUser(c *gin.Context) {
+	db := c.MustGet("db").(*gorm.DB)
+
+	uid, err := token.ExtractUID(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	u := &models.User{}
+	cu := &wmodels.UserCompleteDataResp{}
+	u.ID = uid
+
+	if err := u.GetCompleteUser(db, cu); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, *cu)
+}
+
+// Register godoc
 // @Summary create complete address of an existing user.
 // @Description Create fresh complete address of an existing user. If you want to update just use the PUT instead which provides you only update what field you like.
 // @Tags User
@@ -75,7 +109,7 @@ func PostAddress(c *gin.Context) {
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_jwt_token_here>'"
 // @Security BearerToken
 // @Produce json
-// @Success 201 {object} utils.NormalResp
+// @Success 200 {object} utils.NormalResp
 // @Router /user/address [put]
 func UpdateAddress(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)

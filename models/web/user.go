@@ -18,7 +18,7 @@ type (
 		PostalCode  uint   `json:"postal_code"`
 	}
 	AddressRespData struct {
-		UserID      uint   `json:"user_id"`
+		UserID      uint   `json:"user_id,omitempty"`
 		AddressLine string `json:"address"`
 		City        string `json:"city"`
 		Country     string `json:"country"`
@@ -40,5 +40,13 @@ type (
 		Username string `json:"username"`
 		Email    string `json:"email"`
 		Fullname string `json:"fullname"`
+	}
+	UserCompleteDataResp struct {
+		ID       uint            `json:"id"`
+		Username string          `json:"username"`
+		Email    string          `json:"email"`
+		Fullname string          `json:"fullname"`
+		Role     string          `json:"role"`
+		Address  AddressRespData `json:"address"`
 	}
 )
