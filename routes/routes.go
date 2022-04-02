@@ -47,6 +47,7 @@ func InitRoute(db *gorm.DB) *gin.Engine {
 	user.PUT("/profile", controllers.UpdateProfile)
 	user.POST("/address", controllers.PostAddress)
 	user.PUT("/address", controllers.UpdateAddress)
+	user.PATCH("/role", controllers.ChangeUserRole)
 
 	// swagger route
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
