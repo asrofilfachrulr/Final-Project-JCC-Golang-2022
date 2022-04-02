@@ -17,6 +17,19 @@ definitions:
     - country
     - phone_number
     type: object
+  models.AddressInputNotBinding:
+    properties:
+      address_line:
+        type: string
+      city:
+        type: string
+      country:
+        type: string
+      phone_number:
+        type: integer
+      postal_code:
+        type: integer
+    type: object
   models.AddressRespData:
     properties:
       address:
@@ -191,6 +204,32 @@ paths:
       security:
       - BearerToken: []
       summary: create complete address of an existing user.
+      tags:
+      - User
+    put:
+      description: Update selected address field of an existing user.
+      parameters:
+      - description: Update address field you like. remove that you won't.
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/models.AddressInputNotBinding'
+      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_jwt_token_here>'''
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/utils.NormalResp'
+      security:
+      - BearerToken: []
+      summary: update address of an existing user.
       tags:
       - User
   /user/changepw:

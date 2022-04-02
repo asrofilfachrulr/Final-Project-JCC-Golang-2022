@@ -79,6 +79,47 @@ const docTemplate = `{
             }
         },
         "/user/address": {
+            "put": {
+                "security": [
+                    {
+                        "BearerToken": []
+                    }
+                ],
+                "description": "Update selected address field of an existing user.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "update address of an existing user.",
+                "parameters": [
+                    {
+                        "description": "Update address field you like. remove that you won't.",
+                        "name": "Body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.AddressInputNotBinding"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Authorization. How to input in swagger : 'Bearer \u003cinsert_your_jwt_token_here\u003e'",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/utils.NormalResp"
+                        }
+                    }
+                }
+            },
             "post": {
                 "security": [
                     {
@@ -229,6 +270,26 @@ const docTemplate = `{
                 "country",
                 "phone_number"
             ],
+            "properties": {
+                "address_line": {
+                    "type": "string"
+                },
+                "city": {
+                    "type": "string"
+                },
+                "country": {
+                    "type": "string"
+                },
+                "phone_number": {
+                    "type": "integer"
+                },
+                "postal_code": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.AddressInputNotBinding": {
+            "type": "object",
             "properties": {
                 "address_line": {
                     "type": "string"
