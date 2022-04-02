@@ -95,7 +95,7 @@ const docTemplate = `{
                 "summary": "update address of an existing user.",
                 "parameters": [
                     {
-                        "description": "Update address field you like. remove that you won't.",
+                        "description": "Update address field you like. Remove that you won't.",
                         "name": "Body",
                         "in": "body",
                         "required": true,
@@ -259,6 +259,52 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/user/role": {
+            "patch": {
+                "security": [
+                    {
+                        "BearerToken": []
+                    }
+                ],
+                "description": "Every patch request to this endpoint lead to switch role between [customer], [merchant]. Be careful, switching from [merchant] to [customer] lead to wipe out all user's merchant data (also its products)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "change an existing user role",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authorization. How to input in swagger : 'Bearer \u003cinsert_your_jwt_token_here\u003e'",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/utils.RespWithData"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.RoleDataResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -417,6 +463,17 @@ const docTemplate = `{
                             "type": "string"
                         }
                     }
+                }
+            }
+        },
+        "models.RoleDataResp": {
+            "type": "object",
+            "properties": {
+                "role": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
                 }
             }
         },

@@ -104,6 +104,13 @@ definitions:
             type: string
         type: object
     type: object
+  models.RoleDataResp:
+    properties:
+      role:
+        type: string
+      username:
+        type: string
+    type: object
   models.UpdateProfileInput:
     properties:
       email:
@@ -209,7 +216,7 @@ paths:
     put:
       description: Update selected address field of an existing user.
       parameters:
-      - description: Update address field you like. remove that you won't.
+      - description: Update address field you like. Remove that you won't.
         in: body
         name: Body
         required: true
@@ -287,6 +294,34 @@ paths:
       security:
       - BearerToken: []
       summary: change an existing user profile information.
+      tags:
+      - User
+  /user/role:
+    patch:
+      description: Every patch request to this endpoint lead to switch role between
+        [customer], [merchant]. Be careful, switching from [merchant] to [customer]
+        lead to wipe out all user's merchant data (also its products)
+      parameters:
+      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_jwt_token_here>'''
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.RespWithData'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.RoleDataResp'
+              type: object
+      security:
+      - BearerToken: []
+      summary: change an existing user role
       tags:
       - User
 swagger: "2.0"
