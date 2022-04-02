@@ -120,6 +120,21 @@ definitions:
       username:
         type: string
     type: object
+  models.UserCompleteDataResp:
+    properties:
+      address:
+        $ref: '#/definitions/models.AddressRespData'
+      email:
+        type: string
+      fullname:
+        type: string
+      id:
+        type: integer
+      role:
+        type: string
+      username:
+        type: string
+    type: object
   models.UserDataResp:
     properties:
       email:
@@ -239,8 +254,8 @@ paths:
       produces:
       - application/json
       responses:
-        "201":
-          description: Created
+        "200":
+          description: OK
           schema:
             $ref: '#/definitions/utils.NormalResp'
       security:
@@ -299,6 +314,26 @@ paths:
       security:
       - BearerToken: []
       summary: delete an existing user role
+      tags:
+      - User
+    get:
+      description: Get complete details of logged user.
+      parameters:
+      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_jwt_token_here>'''
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.UserCompleteDataResp'
+      security:
+      - BearerToken: []
+      summary: get complete profile of an existing user.
       tags:
       - User
     put:
