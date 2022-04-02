@@ -66,6 +66,7 @@ func Load(db *gorm.DB) {
 	roles := &models.Role{}
 	countries := &models.Country{}
 	uaddr := &models.UserAddress{}
+	categories := &models.Category{}
 
 	// DROP PREVIOUS TABLES
 	isDropped := false
@@ -73,6 +74,12 @@ func Load(db *gorm.DB) {
 		log.Println("[MIGRATION] DROPPING TABLES")
 		if db.Migrator().HasTable(users) {
 			db.Migrator().DropTable(users)
+		}
+		if db.Migrator().HasTable(countries) {
+			db.Migrator().DropTable(countries)
+		}
+		if db.Migrator().HasTable(categories) {
+			db.Migrator().DropTable(categories)
 		}
 		if db.Migrator().HasTable(userCredentials) {
 			db.Migrator().DropTable(userCredentials)
@@ -93,6 +100,7 @@ func Load(db *gorm.DB) {
 	db.AutoMigrate(
 		users,
 		countries,
+		categories,
 		userCredentials,
 		roles,
 		uaddr,
@@ -172,5 +180,25 @@ func InitStaticData(db *gorm.DB) {
 		db.Create(&aseanCoutries)
 	}
 
+	initCategory := func() {
+		categories := []models.Category{
+			{Name: "Foodie"},
+			{Name: "Beer"},
+			{Name: "Beverage"},
+			{Name: "Gadget"},
+			{Name: "Laptop"},
+			{Name: "Electronic"},
+			{Name: "Men"},
+			{Name: "Women"},
+			{Name: "Outdoors"},
+			{Name: "Health"},
+			{Name: "Household"},
+			{Name: "Books"},
+			{Name: "Tools"},
+		}
+		db.Create(&categories)
+	}
+
 	initCountry()
+	initCategory()
 }
