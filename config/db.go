@@ -165,38 +165,11 @@ func InitDynamicData(db *gorm.DB) {
 // add static data which likely rarely be updated or deleted, so the table won't be dropped
 func InitStaticData(db *gorm.DB) {
 	initCountry := func() {
-		aseanCoutries := []models.Country{
-			{Name: "Indonesia"},
-			{Name: "Singapore"},
-			{Name: "Malaysia"},
-			{Name: "Thailand"},
-			{Name: "Brunei"},
-			{Name: "Philipines"},
-			{Name: "Laos"},
-			{Name: "Vietnam"},
-			{Name: "Cambodia"},
-			{Name: "Myanmar"},
-		}
-		db.Create(&aseanCoutries)
+		db.Create(&models.AseanCountries)
 	}
 
 	initCategory := func() {
-		categories := []models.Category{
-			{Name: "Foodie"},
-			{Name: "Beer"},
-			{Name: "Beverage"},
-			{Name: "Gadget"},
-			{Name: "Laptop"},
-			{Name: "Electronic"},
-			{Name: "Men"},
-			{Name: "Women"},
-			{Name: "Outdoors"},
-			{Name: "Health"},
-			{Name: "Household"},
-			{Name: "Books"},
-			{Name: "Tools"},
-		}
-		db.Create(&categories)
+		db.Create(&models.Categories)
 	}
 
 	initCountry()
