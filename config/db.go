@@ -49,6 +49,7 @@ func ConnectDataBase() *gorm.DB {
 	mode := os.Getenv("DEBUG_MODE")
 	config := ConfigByDebugMode(mode)
 	db, err := gorm.Open(postgres.Open(dsn), config)
+
 	if err != nil {
 		panic(err.Error())
 	}
