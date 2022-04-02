@@ -1,5 +1,19 @@
 basePath: /api/v1
 definitions:
+  anya-day_models_sql.Category:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  anya-day_models_web.Category:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
   models.AddressInput:
     properties:
       address_line:
@@ -45,6 +59,13 @@ definitions:
         type: integer
       user_id:
         type: integer
+    type: object
+  models.CategoryInput:
+    properties:
+      name:
+        type: string
+    required:
+    - name
     type: object
   models.ChangePwInput:
     properties:
@@ -169,6 +190,123 @@ info:
   title: Anya Day API
   version: beta
 paths:
+  /categories:
+    get:
+      description: Get all of existing categories.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.RespWithData'
+            - properties:
+                data:
+                  $ref: '#/definitions/anya-day_models_sql.Category'
+              type: object
+      summary: retrieve list of categories.
+      tags:
+      - Category
+  /dev/category:
+    post:
+      description: Create new category.
+      parameters:
+      - description: Insert new category name.
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/models.CategoryInput'
+      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_jwt_token_here>'''
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.RespWithData'
+            - properties:
+                data:
+                  $ref: '#/definitions/anya-day_models_web.Category'
+              type: object
+      security:
+      - BearerToken: []
+      summary: '[RESTRICTED] Create new category.'
+      tags:
+      - Dev/Category
+  /dev/category/{id}:
+    delete:
+      description: Delete an existing category.
+      parameters:
+      - description: category id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_jwt_token_here>'''
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.RespWithData'
+            - properties:
+                data:
+                  $ref: '#/definitions/anya-day_models_web.Category'
+              type: object
+      security:
+      - BearerToken: []
+      summary: '[RESTRICTED] Delete an existing category.'
+      tags:
+      - Dev/Category
+    put:
+      description: Update an existing category.
+      parameters:
+      - description: category id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Insert new category name
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/models.CategoryInput'
+      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_jwt_token_here>'''
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.RespWithData'
+            - properties:
+                data:
+                  $ref: '#/definitions/anya-day_models_web.Category'
+              type: object
+      security:
+      - BearerToken: []
+      summary: '[RESTRICTED] Update an existing category.'
+      tags:
+      - Dev/Category
   /dev/user/{id}/address:
     post:
       description: Create fresh complete address of an existing user. If you want
