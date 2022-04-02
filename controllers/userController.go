@@ -26,7 +26,7 @@ func PostAddress(c *gin.Context) {
 
 	uid, err := token.ExtractUID(c)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
+		c.JSON(http.StatusUnauthorized, gin.H{
 			"error": err.Error(),
 		})
 		return
@@ -127,7 +127,7 @@ func UpdateProfile(c *gin.Context) {
 
 	uid, err := token.ExtractUID(c)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
+		c.JSON(http.StatusUnauthorized, gin.H{
 			"error": err.Error(),
 		})
 		return
@@ -179,7 +179,7 @@ func ChangePw(c *gin.Context) {
 
 	uid, err := token.ExtractUID(c)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
+		c.JSON(http.StatusUnauthorized, gin.H{
 			"error": err.Error(),
 		})
 		return
@@ -200,5 +200,45 @@ func ChangePw(c *gin.Context) {
 	c.JSON(http.StatusOK, utils.NormalResp{
 		Status:  "success",
 		Message: "berhasil mengganti password",
+	})
+}
+
+// Register godoc
+// @Summary change an existing user role
+// @Description  Every patch request to this endpoint lead to switch role between [customer], [merchant]. Be careful, switching from [merchant] to [customer] lead to wipe out all user's merchant data (also its products)
+// @Tags User
+// @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_jwt_token_here>'"
+// @Security BearerToken
+// @Produce json
+// @Success 200 {object} utils.RespWithData{data=wmodels.RoleDataResp}
+// @Router /user/role [patch]
+func ChangeUserRole(c *gin.Context) {
+	db := c.MustGet("db").(*gorm.DB)
+
+	uid, err := token.ExtractUID(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	r := &models.Role{
+		UserID: uid,
+	}
+	if err := r.ChangeRole(db); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, utils.RespWithData{
+		Status:  "success",
+		Message: "berhasil memperbarui role user",
+		Data: wmodels.RoleDataResp{
+			Username: r.User.Username,
+			Role:     r.Name,
+		},
 	})
 }
