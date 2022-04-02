@@ -57,3 +57,15 @@ func (u *User) UpdateUserProfile(db *gorm.DB, data *wmodels.UpdateProfileInput) 
 	}
 	return nil
 }
+
+func (u *User) AttemptDeleteUser(db *gorm.DB) error {
+	// retrieve all data first for later response
+	db.First(u)
+
+	// delete user
+	err := db.Unscoped().Delete(u).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}

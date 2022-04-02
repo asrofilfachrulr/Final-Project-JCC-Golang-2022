@@ -36,4 +36,9 @@ type (
 		Username string `json:"username"`
 		Role     string `json:"role"`
 	}
+	UserDataResp struct {
+		Username string `json:"username"`
+		Email    string `json:"email"`
+		Fullname string `json:"fullname"`
+	}
 )

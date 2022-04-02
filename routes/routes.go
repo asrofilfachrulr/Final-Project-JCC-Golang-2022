@@ -45,6 +45,7 @@ func InitRoute(db *gorm.DB) *gin.Engine {
 	user.Use(middleware.JWTAuthMiddleware())
 	user.PUT("/changepw", controllers.ChangePw)
 	user.PUT("/profile", controllers.UpdateProfile)
+	user.DELETE("/profile", controllers.DeleteUser)
 	user.POST("/address", controllers.PostAddress)
 	user.PUT("/address", controllers.UpdateAddress)
 	user.PATCH("/role", controllers.ChangeUserRole)

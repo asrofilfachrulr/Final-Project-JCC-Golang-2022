@@ -114,7 +114,7 @@ func UpdateAddress(c *gin.Context) {
 
 // Register godoc
 // @Summary change an existing user profile information.
-// @Description Change an existing user profile information which consists of email, fullname, and username. Email format following RFC 5322 format. For update address info instead, please visit anya-day.herokuapp.com/user/profile/address
+// @Description Change an existing user profile information which consists of email, fullname, and username. Email format following RFC 5322 format. For update address info instead, please use PUT user/profile/address instead. This endpoint has not POST method which same behaviour already handled by POST /register
 // @Tags User
 // @Param Body body wmodels.UpdateProfileInput true "Only insert profile aspect need to be updated. Inserted value may lead to error for some reasons such updating to used username"
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_jwt_token_here>'"
@@ -239,6 +239,47 @@ func ChangeUserRole(c *gin.Context) {
 		Data: wmodels.RoleDataResp{
 			Username: r.User.Username,
 			Role:     r.Name,
+		},
+	})
+}
+
+// Register godoc
+// @Summary delete an existing user role
+// @Description  This request lead to removing all user's related data
+// @Tags User
+// @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_jwt_token_here>'"
+// @Security BearerToken
+// @Produce json
+// @Success 200 {object} utils.RespWithData{data=wmodels.UserDataResp}
+// @Router /user/profile [delete]
+func DeleteUser(c *gin.Context) {
+	db := c.MustGet("db").(*gorm.DB)
+
+	uid, err := token.ExtractUID(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	u := &models.User{}
+	u.ID = uid
+
+	if err := u.AttemptDeleteUser(db); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, utils.RespWithData{
+		Status:  "success",
+		Message: "berhasil menghapus user",
+		Data: wmodels.UserDataResp{
+			Username: u.Username,
+			Fullname: u.FullName,
+			Email:    u.Email,
 		},
 	})
 }
