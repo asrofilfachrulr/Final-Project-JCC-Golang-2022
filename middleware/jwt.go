@@ -35,6 +35,7 @@ func JWTAuthDevMiddleware() gin.HandlerFunc {
 			ctx.JSON(http.StatusUnauthorized, gin.H{
 				"error": err.Error(),
 			})
+			ctx.Abort()
 			return
 		}
 
@@ -43,6 +44,7 @@ func JWTAuthDevMiddleware() gin.HandlerFunc {
 			ctx.JSON(http.StatusUnauthorized, gin.H{
 				"error": "you're not allowed to request",
 			})
+			ctx.Abort()
 			return
 		}
 
