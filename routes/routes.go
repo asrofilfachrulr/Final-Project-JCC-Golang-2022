@@ -46,29 +46,31 @@ func InitRoute(db *gorm.DB) *gin.Engine {
 	user := api.Group("/user")
 	user.Use(middleware.JWTAuthMiddleware())
 	user.PUT("/changepw", controllers.ChangePw)
-
 	user.GET("/profile", controllers.GetCompleteUser)
 	user.PUT("/profile", controllers.UpdateProfile)
 	user.DELETE("/profile", controllers.DeleteUser)
-
 	user.POST("/address", controllers.PostAddress)
 	user.PUT("/address", controllers.UpdateAddress)
-
 	user.PATCH("/role", controllers.ChangeUserRole)
 
 	// /user but for dev
-	dev := r.Group("/dev/user/:id")
-	dev.Use(middleware.JWTAuthDevMiddleware())
-	dev.PUT("/changepw", controllers.DevChangePw)
+	devUser := api.Group("/dev/user/:id")
+	devUser.Use(middleware.JWTAuthDevMiddleware())
+	devUser.PUT("/changepw", controllers.DevChangePw)
+	devUser.GET("/profile", controllers.DevGetCompleteUser)
+	devUser.PUT("/profile", controllers.DevUpdateProfile)
+	devUser.DELETE("/profile", controllers.DevDeleteUser)
+	devUser.POST("/address", controllers.DevPostAddress)
+	devUser.PUT("/address", controllers.DevUpdateAddress)
+	devUser.PATCH("/role", controllers.DevChangeUserRole)
 
-	dev.GET("/profile", controllers.DevGetCompleteUser)
-	dev.PUT("/profile", controllers.DevUpdateProfile)
-	dev.DELETE("/profile", controllers.DevDeleteUser)
-
-	dev.POST("/address", controllers.DevPostAddress)
-	dev.PUT("/address", controllers.DevUpdateAddress)
-
-	dev.PATCH("/role", controllers.DevChangeUserRole)
+	// /category
+	api.GET("/categories", controllers.GetCategories) // guest can access
+	devCategory := api.Group("/dev/category")
+	devCategory.Use(middleware.JWTAuthDevMiddleware())
+	devCategory.POST("/", controllers.DevCreateCategory)
+	devCategory.PUT("/:id", controllers.DevUpdateCategoryById)
+	devCategory.DELETE("/:id", controllers.DevDeleteCategoryById)
 
 	// swagger route
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
