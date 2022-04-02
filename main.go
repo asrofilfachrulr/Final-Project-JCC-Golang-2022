@@ -12,6 +12,14 @@ import (
 	"github.com/joho/godotenv"
 )
 
+// @title Anya Day API
+// @version beta
+// @description API which provide you backend service for your minimalist ecommerce app
+
+// @contact.name Developer
+// @contact.email riidloa@gmail.com
+
+// @BasePath /api/v1
 func main() {
 	env := utils.GetEnvWithFallback("ENVIRONMENT", "development")
 	if env == "development" {
@@ -40,10 +48,6 @@ func main() {
 
 	config.Load(db)
 
-	// programmatically set swagger info
-	docs.SwaggerInfo.Title = "Anya Day API"
-	docs.SwaggerInfo.Description = "API provide backend service for your ecommerce app"
-	docs.SwaggerInfo.Version = "1.0"
 	docs.SwaggerInfo.Host = utils.GetEnvWithFallback("SWAGGER_HOST", "localhost:8080")
 
 	r := routes.InitRoute(db)
