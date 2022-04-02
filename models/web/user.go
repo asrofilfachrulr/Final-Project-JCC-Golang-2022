@@ -32,4 +32,8 @@ type (
 		PhoneNumber uint   `json:"phone_number"`
 		PostalCode  uint   `json:"postal_code"`
 	}
+	RoleDataResp struct {
+		Username string `json:"username"`
+		Role     string `json:"role"`
+	}
 )
