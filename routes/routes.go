@@ -36,12 +36,14 @@ func InitRoute(db *gorm.DB) *gin.Engine {
 		c.Set("_devMap", _devMap)
 	})
 
+	api := r.Group("/api/v1")
+
 	// /auth
-	r.POST("/register", controllers.Register)
-	r.POST("/login", controllers.Login)
+	api.POST("/register", controllers.Register)
+	api.POST("/login", controllers.Login)
 
 	// /user
-	user := r.Group("/user")
+	user := api.Group("/user")
 	user.Use(middleware.JWTAuthMiddleware())
 	user.PUT("/changepw", controllers.ChangePw)
 
