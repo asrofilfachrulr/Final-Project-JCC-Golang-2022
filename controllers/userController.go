@@ -66,6 +66,14 @@ func PostAddress(c *gin.Context) {
 		return
 	}
 
+	// user_id lookup
+	if err := db.First(&models.User{}, uid).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"error": "user not found!",
+		})
+		return
+	}
+
 	var input wmodels.AddressInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -122,6 +130,14 @@ func UpdateAddress(c *gin.Context) {
 		return
 	}
 
+	// user_id lookup
+	if err := db.First(&models.User{}, uid).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"error": "user not found!",
+		})
+		return
+	}
+
 	var input wmodels.AddressInputNotBinding
 	if err := utils.ParseFromJSON(c.Request.Body, &input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -163,6 +179,14 @@ func UpdateProfile(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"error": err.Error(),
+		})
+		return
+	}
+
+	// user_id lookup
+	if err := db.First(&models.User{}, uid).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"error": "user not found!",
 		})
 		return
 	}
@@ -219,6 +243,14 @@ func ChangePw(c *gin.Context) {
 		return
 	}
 
+	// user_id lookup
+	if err := db.First(&models.User{}, uid).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"error": "user not found!",
+		})
+		return
+	}
+
 	uc := &models.UserCredential{
 		Password: input.Password,
 		UserID:   int(uid),
@@ -253,6 +285,14 @@ func ChangeUserRole(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"error": err.Error(),
+		})
+		return
+	}
+
+	// user_id lookup
+	if err := db.First(&models.User{}, uid).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"error": "user not found!",
 		})
 		return
 	}
@@ -293,6 +333,14 @@ func DeleteUser(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"error": err.Error(),
+		})
+		return
+	}
+
+	// user_id lookup
+	if err := db.First(&models.User{}, uid).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"error": "user not found!",
 		})
 		return
 	}
