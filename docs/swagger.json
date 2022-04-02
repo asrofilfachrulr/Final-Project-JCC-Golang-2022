@@ -1,8 +1,15 @@
 {
     "swagger": "2.0",
     "info": {
-        "contact": {}
+        "description": "API which provide you backend service for your minimalist ecommerce app",
+        "title": "Anya Day API",
+        "contact": {
+            "name": "Developer",
+            "email": "riidloa@gmail.com"
+        },
+        "version": "beta"
     },
+    "basePath": "/api/v1",
     "paths": {
         "/dev/user/{id}/address": {
             "put": {

@@ -1,3 +1,4 @@
+basePath: /api/v1
 definitions:
   models.AddressInput:
     properties:
@@ -160,7 +161,13 @@ definitions:
         type: string
     type: object
 info:
-  contact: {}
+  contact:
+    email: riidloa@gmail.com
+    name: Developer
+  description: API which provide you backend service for your minimalist ecommerce
+    app
+  title: Anya Day API
+  version: beta
 paths:
   /dev/user/{id}/address:
     post:
