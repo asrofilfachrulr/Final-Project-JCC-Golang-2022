@@ -28,12 +28,12 @@ func InitRoute(db *gorm.DB) *gin.Engine {
 		var roles []models.Role
 		db.Where("name = ?", "dev").Find(&roles)
 
-		superMap := make(map[uint]string)
+		_devMap := make(map[uint]string)
 		for _, u := range roles {
-			superMap[u.UserID] = u.Name
+			_devMap[u.UserID] = u.Name
 		}
 
-		c.Set("super_map", superMap)
+		c.Set("_devMap", _devMap)
 	})
 
 	// /auth
@@ -53,6 +53,20 @@ func InitRoute(db *gorm.DB) *gin.Engine {
 	user.PUT("/address", controllers.UpdateAddress)
 
 	user.PATCH("/role", controllers.ChangeUserRole)
+
+	// /user but for dev
+	dev := r.Group("/dev/user/:id")
+	dev.Use(middleware.JWTAuthDevMiddleware())
+	dev.PUT("/changepw", controllers.DevChangePw)
+
+	dev.GET("/profile", controllers.DevGetCompleteUser)
+	dev.PUT("/profile", controllers.DevUpdateProfile)
+	dev.DELETE("/profile", controllers.DevDeleteUser)
+
+	dev.POST("/address", controllers.DevPostAddress)
+	dev.PUT("/address", controllers.DevUpdateAddress)
+
+	dev.PATCH("/role", controllers.DevChangeUserRole)
 
 	// swagger route
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

@@ -22,6 +22,14 @@ func StringToIntIgnore(s string) int {
 	return n
 }
 
+func StringToUint(s string) (uint, error) {
+	n, err := strconv.ParseUint(s, 10, 32)
+	if err != nil {
+		return 0, err
+	}
+	return uint(n), nil
+}
+
 func CountDigits(n int) int {
 	count := 1
 	for r := n / 10; r != 0; r /= 10 {
