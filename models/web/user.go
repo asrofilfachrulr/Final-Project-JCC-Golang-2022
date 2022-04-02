@@ -25,4 +25,11 @@ type (
 		PhoneNumber uint   `json:"number"`
 		PostalCode  uint   `json:"postal_code,omitempty"`
 	}
+	AddressInputNotBinding struct {
+		AddressLine string `json:"address_line"`
+		City        string `json:"city"`
+		Country     string `json:"country"`
+		PhoneNumber uint   `json:"phone_number"`
+		PostalCode  uint   `json:"postal_code"`
+	}
 )
