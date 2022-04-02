@@ -35,11 +35,13 @@ func (ua *UserAddress) PostAddress(db *gorm.DB, data *wmodels.AddressInput) erro
 	}
 	ua.PhoneNumber = data.PhoneNumber
 
-	err = utils.ValidateDigitInt(int(data.PostalCode), 4, 5, "postal code")
-	if err != nil {
-		return err
+	if data.PostalCode != 0 {
+		err = utils.ValidateDigitInt(int(data.PostalCode), 4, 5, "postal code")
+		if err != nil {
+			return err
+		}
+		ua.PostalCode = data.PostalCode
 	}
-	ua.PostalCode = data.PostalCode
 
 	if err := db.Save(ua).Error; err != nil {
 		return err
