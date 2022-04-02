@@ -68,6 +68,51 @@ func PostAddress(c *gin.Context) {
 }
 
 // Register godoc
+// @Summary update address of an existing user.
+// @Description Update selected address field of an existing user.
+// @Tags User
+// @Param Body body wmodels.AddressInputNotBinding true "Update address field you like. Remove that you won't."
+// @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_jwt_token_here>'"
+// @Security BearerToken
+// @Produce json
+// @Success 201 {object} utils.NormalResp
+// @Router /user/address [put]
+func UpdateAddress(c *gin.Context) {
+	db := c.MustGet("db").(*gorm.DB)
+
+	uid, err := token.ExtractUID(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	var input wmodels.AddressInputNotBinding
+	if err := utils.ParseFromJSON(c.Request.Body, &input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	uaddr := &models.UserAddress{
+		UserID: uid,
+	}
+	if err := uaddr.UpdateAddress(db, &input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, utils.NormalResp{
+		Status:  "success",
+		Message: "berhasil memperbarui info alamat user",
+	})
+}
+
+// Register godoc
 // @Summary change an existing user profile information.
 // @Description Change an existing user profile information which consists of email, fullname, and username. Email format following RFC 5322 format. For update address info instead, please visit anya-day.herokuapp.com/user/profile/address
 // @Tags User
