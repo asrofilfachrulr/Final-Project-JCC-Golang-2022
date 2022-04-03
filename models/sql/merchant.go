@@ -18,6 +18,18 @@ type (
 	}
 )
 
+func CreateMerchant(db *gorm.DB, m *Merchant, ma *MerchantAddress) error {
+	if err := db.Create(m).Error; err != nil {
+		return err
+	}
+
+	ma.MerchantID = m.ID
+	if err := db.Create(ma).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
 func GetAll(db *gorm.DB, filter *wmodels.MerchantFilter, m []Merchant, mout *[]wmodels.MerchantOutput) error {
 	var mo []wmodels.MerchantOutput
 
@@ -81,4 +93,8 @@ func (m *Merchant) GetById(db *gorm.DB, data *wmodels.MerchantDetailsOutput) err
 func (m *Merchant) Delete(db *gorm.DB) error {
 	return db.Unscoped().Delete(m).Error
 
+}
+
+func (m *Merchant) Put(db *gorm.DB) error {
+	return nil
 }
