@@ -98,6 +98,17 @@ definitions:
       user:
         type: string
     type: object
+  models.MerchantOutput:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      owner:
+        type: string
+      rating:
+        type: string
+    type: object
   models.RegisterInput:
     properties:
       email:
@@ -555,6 +566,24 @@ paths:
       summary: Login with an existing user
       tags:
       - Auth
+  /merchants:
+    get:
+      description: Get all avalaible merchants.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.RespWithData'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.MerchantOutput'
+              type: object
+      summary: Get all avalaible merchants.
+      tags:
+      - Merchant
   /register:
     post:
       description: registering a new user

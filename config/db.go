@@ -175,22 +175,38 @@ func InitDynamicData(db *gorm.DB) {
 	if mode == "USERS_DEV" {
 		initUserDummy()
 		initDevAcc()
-	} else if mode == "USERS" {
-		initUserDummy()
 	}
-
 }
 
 // add static data which likely rarely be updated or deleted, so the table won't be dropped
 func InitStaticData(db *gorm.DB) {
-	initCountry := func() {
-		db.Create(&models.AseanCountries)
+	db.Create(&models.AseanCountries)
+	db.Create(&models.Categories)
+	db.Create(&models.Payments)
+	db.Create(&models.Shipments)
+
+	// seeding merchant aand product
+	var users []models.User
+	db.Find(&users)
+
+	j := 0
+	merchants := models.Merchants
+	for i := 0; i < len(merchants); i++ {
+		merchants[i].AdminId = users[j].ID
+		j += 1
 	}
 
-	initCategory := func() {
-		db.Create(&models.Categories)
+	db.Create(&merchants)
+
+	j = 0
+	products := models.Products
+	for i := 0; i < len(products); i++ {
+		products[i].MerchantID = merchants[j].ID
+		j += 1
+		if j == 2 {
+			j = 0
+		}
 	}
 
-	initCountry()
-	initCategory()
+	db.Create(&products)
 }

@@ -72,6 +72,9 @@ func InitRoute(db *gorm.DB) *gin.Engine {
 	devCategory.PUT("/:id", controllers.DevUpdateCategoryById)
 	devCategory.DELETE("/:id", controllers.DevDeleteCategoryById)
 
+	// /merchant
+	api.GET("/merchants", controllers.GetMerchants)
+
 	// swagger route
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
