@@ -39,7 +39,7 @@ func GetCategories(c *gin.Context) {
 // @Security BearerToken
 // @Produce json
 // @Success 201 {object} utils.RespWithData{data=wmodels.Category}
-// @Router /dev/category [POST]
+// @Router /dev/categories [POST]
 func DevCreateCategory(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 
@@ -80,7 +80,7 @@ func DevCreateCategory(c *gin.Context) {
 // @Security BearerToken
 // @Produce json
 // @Success 200 {object} utils.RespWithData{data=wmodels.Category}
-// @Router /dev/category/{id} [DELETE]
+// @Router /dev/categories/{id} [DELETE]
 func DevDeleteCategoryById(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 
@@ -133,7 +133,7 @@ func DevDeleteCategoryById(c *gin.Context) {
 // @Security BearerToken
 // @Produce json
 // @Success 200 {object} utils.RespWithData{data=wmodels.Category}
-// @Router /dev/category/{id} [PUT]
+// @Router /dev/categories/{id} [PUT]
 func DevUpdateCategoryById(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 

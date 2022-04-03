@@ -20,7 +20,7 @@ import (
 // @Security BearerToken
 // @Produce json
 // @Success 200 {object} wmodels.UserCompleteDataResp
-// @Router /dev/user/{id}/profile [GET]
+// @Router /dev/users/{id}/profile [GET]
 func DevGetCompleteUser(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 
@@ -62,7 +62,7 @@ func DevGetCompleteUser(c *gin.Context) {
 // @Security BearerToken
 // @Produce json
 // @Success 201 {object} utils.RespWithData{data=wmodels.AddressRespData}
-// @Router /dev/user/{id}/address [post]
+// @Router /dev/users/{id}/address [post]
 func DevPostAddress(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 
@@ -133,7 +133,7 @@ func DevPostAddress(c *gin.Context) {
 // @Security BearerToken
 // @Produce json
 // @Success 200 {object} utils.NormalResp
-// @Router /dev/user/{id}/address [put]
+// @Router /dev/users/{id}/address [put]
 func DevUpdateAddress(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 
@@ -193,7 +193,7 @@ func DevUpdateAddress(c *gin.Context) {
 // @Security BearerToken
 // @Produce json
 // @Success 200 {object} utils.NormalResp
-// @Router /dev/user/{id}/profile [put]
+// @Router /dev/users/{id}/profile [put]
 func DevUpdateProfile(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 
@@ -252,7 +252,7 @@ func DevUpdateProfile(c *gin.Context) {
 // @Security BearerToken
 // @Produce json
 // @Success 200 {object} utils.NormalResp
-// @Router /dev/user/{id}/changepw [put]
+// @Router /dev/users/{id}/changepw [put]
 func DevChangePw(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 	input := &wmodels.ChangePwInput{}
@@ -313,7 +313,7 @@ func DevChangePw(c *gin.Context) {
 // @Security BearerToken
 // @Produce json
 // @Success 200 {object} utils.RespWithData{data=wmodels.RoleDataResp}
-// @Router /dev/user/{id}/role [patch]
+// @Router /dev/users/{id}/role [patch]
 func DevChangeUserRole(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 
@@ -368,7 +368,7 @@ func DevChangeUserRole(c *gin.Context) {
 // @Security BearerToken
 // @Produce json
 // @Success 200 {object} utils.RespWithData{data=wmodels.UserDataResp}
-// @Router /dev/user/{id}/profile [delete]
+// @Router /dev/users/{id}/profile [delete]
 func DevDeleteUser(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 

@@ -98,16 +98,36 @@ definitions:
       user:
         type: string
     type: object
-  models.MerchantOutput:
+  models.MerchantAddrOutput:
     properties:
+      address_line:
+        type: string
+      city:
+        type: string
+      country:
+        type: string
+    type: object
+  models.MerchantDetailsOutput:
+    properties:
+      address:
+        $ref: '#/definitions/models.MerchantAddrOutput'
       id:
         type: integer
       name:
         type: string
-      owner:
+      rating:
+        type: number
+    type: object
+  models.MerchantOutput:
+    properties:
+      city:
+        type: string
+      id:
+        type: integer
+      name:
         type: string
       rating:
-        type: string
+        type: number
     type: object
   models.RegisterInput:
     properties:
@@ -219,7 +239,7 @@ paths:
       summary: retrieve list of categories.
       tags:
       - Category
-  /dev/category:
+  /dev/categories:
     post:
       description: Create new category.
       parameters:
@@ -251,7 +271,7 @@ paths:
       summary: '[RESTRICTED] Create new category.'
       tags:
       - Dev/Category
-  /dev/category/{id}:
+  /dev/categories/{id}:
     delete:
       description: Delete an existing category.
       parameters:
@@ -318,7 +338,7 @@ paths:
       summary: '[RESTRICTED] Update an existing category.'
       tags:
       - Dev/Category
-  /dev/user/{id}/address:
+  /dev/users/{id}/address:
     post:
       description: Create fresh complete address of an existing user. If you want
         to update just use the PUT instead which provides you only update what field
@@ -389,7 +409,7 @@ paths:
       summary: '[EXPERIMENTAL] [RESTRICTED] update address of an existing user.'
       tags:
       - Dev/User
-  /dev/user/{id}/changepw:
+  /dev/users/{id}/changepw:
     put:
       description: Attempt change password from an existing user
       parameters:
@@ -421,7 +441,7 @@ paths:
       summary: '[EXPERIMENTAL] [RESTRICTED] change an existing user password'
       tags:
       - Dev/User
-  /dev/user/{id}/profile:
+  /dev/users/{id}/profile:
     delete:
       description: This request lead to removing all user's related data
       parameters:
@@ -512,7 +532,7 @@ paths:
       summary: '[EXPERIMENTAL] [RESTRICTED] change an existing user profile information.'
       tags:
       - Dev/User
-  /dev/user/{id}/role:
+  /dev/users/{id}/role:
     patch:
       description: Every patch request to this endpoint lead to switch role between
         [customer], [merchant]. Be careful, switching from [merchant] to [customer]
@@ -569,6 +589,18 @@ paths:
   /merchants:
     get:
       description: Get all avalaible merchants.
+      parameters:
+      - example: Bandung
+        in: query
+        name: city
+        type: string
+      - in: query
+        name: name
+        type: string
+      - example: "4.5"
+        in: query
+        name: rating
+        type: string
       produces:
       - application/json
       responses:
@@ -582,6 +614,60 @@ paths:
                   $ref: '#/definitions/models.MerchantOutput'
               type: object
       summary: Get all avalaible merchants.
+      tags:
+      - Merchant
+  /merchants/{id}:
+    delete:
+      description: Delete an existing merchant.
+      parameters:
+      - description: merchant id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_jwt_token_here>'''
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.RespWithData'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.MerchantOutput'
+              type: object
+      security:
+      - BearerToken: []
+      summary: Delete an existing merchant.
+      tags:
+      - Merchant
+    get:
+      description: Get specific merchant.
+      parameters:
+      - description: merchant id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.RespWithData'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.MerchantDetailsOutput'
+              type: object
+      summary: Get specific merchant.
       tags:
       - Merchant
   /register:

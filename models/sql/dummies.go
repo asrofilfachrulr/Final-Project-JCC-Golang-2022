@@ -12,9 +12,15 @@ var UsersDummy = []User{
 }
 
 var Merchants = []Merchant{
-	{Name: "Jaya Store", Rating: "5"},
-	{Name: "Sinar Muda", Rating: "4.9"},
-	{Name: "Java Net Tech", Rating: "4.5"},
+	{Name: "Jaya Store", Rating: 5},
+	{Name: "Sinar Muda", Rating: 4.9},
+	{Name: "Java Net Tech", Rating: 4.5},
+}
+
+var MerchantAddresses = []MerchantAddress{
+	{OfflineStoreAddress: "Jl. Sukarno Hatta 235", City: "Bandung", CountryID: 1},
+	{OfflineStoreAddress: "Jl. Kalveri 120", City: "Jakarta", CountryID: 1},
+	{OfflineStoreAddress: "Jl. Pattimura 32", City: "Surabaya", CountryID: 1},
 }
 
 var Products = []Product{

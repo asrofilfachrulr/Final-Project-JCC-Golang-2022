@@ -54,7 +54,7 @@ func InitRoute(db *gorm.DB) *gin.Engine {
 	user.PATCH("/role", controllers.ChangeUserRole)
 
 	// /user but for dev
-	devUser := api.Group("/dev/user/:id")
+	devUser := api.Group("/dev/users/:id")
 	devUser.Use(middleware.JWTAuthDevMiddleware())
 	devUser.PUT("/changepw", controllers.DevChangePw)
 	devUser.GET("/profile", controllers.DevGetCompleteUser)
@@ -66,7 +66,7 @@ func InitRoute(db *gorm.DB) *gin.Engine {
 
 	// /category
 	api.GET("/categories", controllers.GetCategories) // guest can access
-	devCategory := api.Group("/dev/category")
+	devCategory := api.Group("/dev/categories")
 	devCategory.Use(middleware.JWTAuthDevMiddleware())
 	devCategory.POST("/", controllers.DevCreateCategory)
 	devCategory.PUT("/:id", controllers.DevUpdateCategoryById)
@@ -74,6 +74,9 @@ func InitRoute(db *gorm.DB) *gin.Engine {
 
 	// /merchant
 	api.GET("/merchants", controllers.GetMerchants)
+	api.GET("/merchants/:id", controllers.GetMerchantById)
+	merchant := api.Group("/merchants", middleware.JWTMerchantMiddleware())
+	merchant.DELETE("/:id", controllers.DeleteMerchantById)
 
 	// swagger route
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

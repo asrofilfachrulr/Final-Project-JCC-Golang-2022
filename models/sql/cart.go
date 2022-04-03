@@ -10,6 +10,5 @@ type (
 		Total      uint     `gorm:"not null"`
 		User       User     `gorm:"constraint:OnDelete:CASCADE"`
 		Merchant   Merchant `gorm:"constraint:OnDelete:CASCADE"`
-		CartItems  []CartItem
 	}
 )

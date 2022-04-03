@@ -51,7 +51,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/dev/category": {
+        "/dev/categories": {
             "post": {
                 "security": [
                     {
@@ -106,7 +106,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/dev/category/{id}": {
+        "/dev/categories/{id}": {
             "put": {
                 "security": [
                     {
@@ -219,7 +219,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/dev/user/{id}/address": {
+        "/dev/users/{id}/address": {
             "put": {
                 "security": [
                     {
@@ -329,7 +329,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/dev/user/{id}/changepw": {
+        "/dev/users/{id}/changepw": {
             "put": {
                 "security": [
                     {
@@ -379,7 +379,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/dev/user/{id}/profile": {
+        "/dev/users/{id}/profile": {
             "get": {
                 "security": [
                     {
@@ -519,7 +519,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/dev/user/{id}/role": {
+        "/dev/users/{id}/role": {
             "patch": {
                 "security": [
                     {
@@ -613,6 +613,117 @@ const docTemplate = `{
                     "Merchant"
                 ],
                 "summary": "Get all avalaible merchants.",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "Bandung",
+                        "name": "city",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "example": "4.5",
+                        "name": "rating",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/utils.RespWithData"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.MerchantOutput"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/merchants/{id}": {
+            "get": {
+                "description": "Get specific merchant.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Merchant"
+                ],
+                "summary": "Get specific merchant.",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "merchant id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/utils.RespWithData"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.MerchantDetailsOutput"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerToken": []
+                    }
+                ],
+                "description": "Delete an existing merchant.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Merchant"
+                ],
+                "summary": "Delete an existing merchant.",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "merchant id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Authorization. How to input in swagger : 'Bearer \u003cinsert_your_jwt_token_here\u003e'",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1121,20 +1232,51 @@ const docTemplate = `{
                 }
             }
         },
-        "models.MerchantOutput": {
+        "models.MerchantAddrOutput": {
             "type": "object",
             "properties": {
+                "address_line": {
+                    "type": "string"
+                },
+                "city": {
+                    "type": "string"
+                },
+                "country": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.MerchantDetailsOutput": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "$ref": "#/definitions/models.MerchantAddrOutput"
+                },
                 "id": {
                     "type": "integer"
                 },
                 "name": {
                     "type": "string"
                 },
-                "owner": {
+                "rating": {
+                    "type": "number"
+                }
+            }
+        },
+        "models.MerchantOutput": {
+            "type": "object",
+            "properties": {
+                "city": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
                     "type": "string"
                 },
                 "rating": {
-                    "type": "string"
+                    "type": "number"
                 }
             }
         },
