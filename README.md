@@ -30,11 +30,11 @@ Auth | Bearer Token: JWT | [link](https://jwt.io/)
 
 ### Todo dari trainer:
 - [x] Wajib di deploy di heroku - 10 poin
-- [ ] Database harus SQL dan wajib menggunakan relasi database (lampirkan skema databasenya dan file sqlnya di repository) - 20 poin 
-- [ ] Terdapat fitur register, login, ganti password dan wajib memiliki JWT Auth Middleware - 20 poin
+- [x] Database harus SQL dan wajib menggunakan relasi database (lampirkan skema databasenya dan file sqlnya di repository) - 20 poin 
+- [x] Terdapat fitur register, login, ganti password dan wajib memiliki JWT Auth Middleware - 20 poin
 - [ ] Wajib ada interaksi user dengan tema terkait - 20 poin
-- [ ] Minimal terdiri dari 7 tabel - 10 poin
-- [ ] Dokumentasi API - 20 poin
+- [x] Minimal terdiri dari 7 tabel - 10 poin
+- [x] Dokumentasi API - 20 poin
 
 ### Todo pribadi:
 - [ ] Menerapkan mailer => mengirim email transaksi yang dibuat kepada user
