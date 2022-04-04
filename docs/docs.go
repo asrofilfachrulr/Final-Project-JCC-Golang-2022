@@ -922,6 +922,21 @@ const docTemplate = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "price",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "rating",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -1543,6 +1558,9 @@ const docTemplate = `{
                 },
                 "price": {
                     "type": "integer"
+                },
+                "rating": {
+                    "type": "number"
                 }
             }
         },

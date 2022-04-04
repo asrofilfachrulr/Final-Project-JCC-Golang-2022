@@ -29,6 +29,7 @@ var Models = []interface{}{
 	&models.TransactionItem{},
 	&models.Cart{},
 	&models.CartItem{},
+	&models.ProductReview{},
 }
 
 func NewLogger() logger.Interface {
