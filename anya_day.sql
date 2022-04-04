@@ -25,15 +25,15 @@ SET default_table_access_method = heap;
 --
 
 CREATE TABLE public.cart_items (
+    id bigint NOT NULL,
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone,
+    deleted_at timestamp with time zone,
     cart_id bigint NOT NULL,
     product_id bigint NOT NULL,
     price bigint NOT NULL,
     qty bigint NOT NULL,
-    sub_total bigint NOT NULL,
-    id bigint NOT NULL,
-    created_at timestamp with time zone,
-    updated_at timestamp with time zone,
-    deleted_at timestamp with time zone
+    sub_total bigint NOT NULL
 );
 
 
@@ -188,7 +188,7 @@ CREATE TABLE public.merchants (
     updated_at timestamp with time zone,
     deleted_at timestamp with time zone,
     name text NOT NULL,
-    rating smallint,
+    rating numeric,
     admin_id bigint NOT NULL
 );
 
@@ -251,6 +251,20 @@ ALTER SEQUENCE public.payments_id_seq OWNED BY public.payments.id;
 
 
 --
+-- Name: product_reviews; Type: TABLE; Schema: public; Owner: anya
+--
+
+CREATE TABLE public.product_reviews (
+    user_id bigint NOT NULL,
+    product_id bigint NOT NULL,
+    review text,
+    rating numeric NOT NULL
+);
+
+
+ALTER TABLE public.product_reviews OWNER TO anya;
+
+--
 -- Name: products; Type: TABLE; Schema: public; Owner: anya
 --
 
@@ -262,6 +276,9 @@ CREATE TABLE public.products (
     name text NOT NULL,
     merchant_id bigint NOT NULL,
     price bigint NOT NULL,
+    "desc" text,
+    rating numeric,
+    stock bigint NOT NULL,
     category_id bigint NOT NULL
 );
 
@@ -642,7 +659,7 @@ ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_
 -- Data for Name: cart_items; Type: TABLE DATA; Schema: public; Owner: anya
 --
 
-COPY public.cart_items (cart_id, product_id, price, qty, sub_total, id, created_at, updated_at, deleted_at) FROM stdin;
+COPY public.cart_items (id, created_at, updated_at, deleted_at, cart_id, product_id, price, qty, sub_total) FROM stdin;
 \.
 
 
@@ -698,6 +715,9 @@ COPY public.countries (id, name) FROM stdin;
 --
 
 COPY public.merchant_addresses (merchant_id, city, offline_store_address, country_id) FROM stdin;
+1	Bandung	Jl. Sukarno Hatta 235	1
+2	Jakarta	Jl. Kalveri 120	1
+3	Surabaya	Jl. Pattimura 32	1
 \.
 
 
@@ -706,6 +726,9 @@ COPY public.merchant_addresses (merchant_id, city, offline_store_address, countr
 --
 
 COPY public.merchants (id, created_at, updated_at, deleted_at, name, rating, admin_id) FROM stdin;
+1	2022-04-04 12:41:23.680496+07	2022-04-04 12:41:23.680496+07	\N	Jaya Store	5	1
+2	2022-04-04 12:41:23.680496+07	2022-04-04 12:41:23.680496+07	\N	Sinar Muda	4.900000095367432	2
+3	2022-04-04 12:41:23.680496+07	2022-04-04 12:41:23.680496+07	\N	Java Net Tech	4.5	3
 \.
 
 
@@ -714,6 +737,23 @@ COPY public.merchants (id, created_at, updated_at, deleted_at, name, rating, adm
 --
 
 COPY public.payments (id, name, method) FROM stdin;
+1	BJA	MBanking
+2	BLI	MBanking
+3	BMI	MBanking
+4	Sendiri	MBanking
+5	DANE	EWallet
+6	OPO	EWallet
+7	Gopey	EWallet
+8	Shopipay	EWallet
+\.
+
+
+--
+-- Data for Name: product_reviews; Type: TABLE DATA; Schema: public; Owner: anya
+--
+
+COPY public.product_reviews (user_id, product_id, review, rating) FROM stdin;
+3	1	mantap sih	3
 \.
 
 
@@ -721,7 +761,13 @@ COPY public.payments (id, name, method) FROM stdin;
 -- Data for Name: products; Type: TABLE DATA; Schema: public; Owner: anya
 --
 
-COPY public.products (id, created_at, updated_at, deleted_at, name, merchant_id, price, category_id) FROM stdin;
+COPY public.products (id, created_at, updated_at, deleted_at, name, merchant_id, price, "desc", rating, stock, category_id) FROM stdin;
+1	2022-04-04 12:41:23.691605+07	2022-04-04 12:41:23.691605+07	\N	Indomi Sedap	1	2700	Mie goreng pilihan nomer #1 di Indonesia	0	10	1
+2	2022-04-04 12:41:23.691605+07	2022-04-04 12:41:23.691605+07	\N	Indomi Kuah Ayam	2	2900	Menggunakan kaldu ayam asli, Indomi Kuah Ayam siap memulai aktifitas kamu agar semakin berwarna 	0	100	1
+3	2022-04-04 12:41:23.691605+07	2022-04-04 12:41:23.691605+07	\N	Levono Thinklad 260x	1	3900000	Second like new Ex-Singapore, mulus 98.99%. i5-6200u, RAM DDR4 8GB, SSD SATA 256GB	0	1	5
+4	2022-04-04 12:41:23.691605+07	2022-04-04 12:41:23.691605+07	\N	Oxadon Oye	2	1500	Meredakan gejala flu dan sakil kepala ringan	0	100	10
+5	2022-04-04 12:41:23.691605+07	2022-04-04 12:41:23.691605+07	\N	Sumsang Ultra Max 12	1	12000000	Six cameras, 16GB RAM, 5000mAh Battery , and SnapNaga gen 1	0	2	4
+6	2022-04-04 12:41:23.691605+07	2022-04-04 12:41:23.691605+07	\N	Kukira kau home	2	54000	Novel best seller dari Mamank Garox ke-12, Menceritakan tentang pahitnya minum obat.	0	100	12
 \.
 
 
@@ -738,15 +784,15 @@ COPY public.prohibit_categories (category_id, country_id) FROM stdin;
 --
 
 COPY public.roles (id, created_at, updated_at, deleted_at, user_id, name) FROM stdin;
-1	2022-04-03 09:50:39.827923+07	2022-04-03 09:50:39.827923+07	\N	1	customer
-2	2022-04-03 09:50:39.894991+07	2022-04-03 09:50:39.894991+07	\N	2	customer
-3	2022-04-03 09:50:39.960284+07	2022-04-03 09:50:39.960284+07	\N	3	customer
-4	2022-04-03 09:50:40.027112+07	2022-04-03 09:50:40.027112+07	\N	4	customer
-5	2022-04-03 09:50:40.092376+07	2022-04-03 09:50:40.092376+07	\N	5	customer
-6	2022-04-03 09:50:40.158731+07	2022-04-03 09:50:40.158731+07	\N	6	customer
-7	2022-04-03 09:50:40.225303+07	2022-04-03 09:50:40.225303+07	\N	7	customer
-8	2022-04-03 09:50:40.291018+07	2022-04-03 09:50:40.291018+07	\N	8	customer
-9	2022-04-03 09:50:40.36335+07	2022-04-03 09:50:40.36335+07	\N	9	dev
+1	2022-04-04 12:41:23.113823+07	2022-04-04 12:41:23.113823+07	\N	1	customer
+2	2022-04-04 12:41:23.181258+07	2022-04-04 12:41:23.181258+07	\N	2	customer
+3	2022-04-04 12:41:23.247633+07	2022-04-04 12:41:23.247633+07	\N	3	customer
+4	2022-04-04 12:41:23.316522+07	2022-04-04 12:41:23.316522+07	\N	4	customer
+5	2022-04-04 12:41:23.38742+07	2022-04-04 12:41:23.38742+07	\N	5	customer
+6	2022-04-04 12:41:23.454108+07	2022-04-04 12:41:23.454108+07	\N	6	customer
+7	2022-04-04 12:41:23.521951+07	2022-04-04 12:41:23.521951+07	\N	7	customer
+8	2022-04-04 12:41:23.587898+07	2022-04-04 12:41:23.587898+07	\N	8	customer
+9	2022-04-04 12:41:23.673669+07	2022-04-04 12:41:23.673669+07	\N	9	dev
 \.
 
 
@@ -755,6 +801,13 @@ COPY public.roles (id, created_at, updated_at, deleted_at, user_id, name) FROM s
 --
 
 COPY public.shipments (id, name, method) FROM stdin;
+1	JNI	Intercity
+2	JNP	Intercity
+3	Bahana Express	Intercity
+4	AnterAe	Intercity
+5	Grap Express	Intracity
+6	GoGo Send	Intracity
+7	FedUp	International
 \.
 
 
@@ -787,15 +840,15 @@ COPY public.user_addresses (id, created_at, updated_at, deleted_at, user_id, add
 --
 
 COPY public.user_credentials (id, created_at, updated_at, deleted_at, user_id, username, password) FROM stdin;
-1	2022-04-03 09:50:39.821457+07	2022-04-03 09:50:39.821457+07	\N	1	john	$2a$10$1uKDG.gNrfSuLoT06Iq1Xe02Kj2KehNOHMgfd/H3selRAoPlnWDF6
-2	2022-04-03 09:50:39.890091+07	2022-04-03 09:50:39.890091+07	\N	2	mary	$2a$10$9Ph56vQTajfYAAEL1G8p6u0J5s1L1n7WUTNiJYjwka9oFtgyLz.MG
-3	2022-04-03 09:50:39.955609+07	2022-04-03 09:50:39.955609+07	\N	3	xi	$2a$10$dptFe8lTD2uErpp110sUCeUk.b9yoqiBT.Hp5qON58oMD/23ZCQES
-4	2022-04-03 09:50:40.022047+07	2022-04-03 09:50:40.022047+07	\N	4	mark	$2a$10$9qiuw3LRVvaCX45NMJ36quFE/2lM65ucgWSNzR35fHJY9ePr62cvm
-5	2022-04-03 09:50:40.087513+07	2022-04-03 09:50:40.087513+07	\N	5	ng	$2a$10$O0wMGYv1VTYj6VP9l4YHVeaaiWm9QLuQyApKUS94DCZOTRkxNN8zm
-6	2022-04-03 09:50:40.153851+07	2022-04-03 09:50:40.153851+07	\N	6	jack	$2a$10$cy5B7B7GWxPVYkJ.Gh0VPed0Q6qXFQdPxdFLi/61XpMEXUgV3n1Se
-7	2022-04-03 09:50:40.220324+07	2022-04-03 09:50:40.220324+07	\N	7	tony	$2a$10$O/EJ6YkqK62e/BLndhqOVuvA0iJ7Af/rP7AeUyOpo9jpau6SR/WUK
-8	2022-04-03 09:50:40.286222+07	2022-04-03 09:50:40.286222+07	\N	8	andy	$2a$10$uvP8AyFdtg4X1EZFEfKDo.TF8a8pqXxSPY9m9V/mT4Oue89ZkboKy
-9	2022-04-03 09:50:40.358267+07	2022-04-03 09:50:40.358267+07	\N	9	anya	$2a$10$2/EWcaQMl7C9oGJmNWBR/ODo3u38DzT7z/e1SnLQexGf913MNwYB6
+1	2022-04-04 12:41:23.106364+07	2022-04-04 12:41:23.106364+07	\N	1	john	$2a$10$cw/T2eSO5hRuanJKDfeRr.8ZgAI2GSlaF5VA/XNyAwIJ.5dCGR4RW
+2	2022-04-04 12:41:23.176907+07	2022-04-04 12:41:23.176907+07	\N	2	mary	$2a$10$7bI3t/Yznwz3IuWHaykdpuws9zBdy9ylhf0YeLwu/bF0AFRvYNCEq
+3	2022-04-04 12:41:23.243334+07	2022-04-04 12:41:23.243334+07	\N	3	xi	$2a$10$Jgz.LdewVNU5gFk/dXNKbud1XA.rbM4bpo99n320/yow1C/VC50c2
+4	2022-04-04 12:41:23.311038+07	2022-04-04 12:41:23.311038+07	\N	4	mark	$2a$10$DHOMSgi5NbvquJaU1IG3kekpOcpdP97Po65/lrsWV8lcA/W/1vOlK
+5	2022-04-04 12:41:23.382092+07	2022-04-04 12:41:23.382092+07	\N	5	ng	$2a$10$/ulfedyU1sFNCAZKAsC66OLmTy85de4z4nSgjj5uzZXMdJ6SN0Ni.
+6	2022-04-04 12:41:23.449082+07	2022-04-04 12:41:23.449082+07	\N	6	jack	$2a$10$r.Ve8GzJCAER33BJVc7c3O38V0tTvauhcb8bOMm.VnDr2I/2MdLSi
+7	2022-04-04 12:41:23.516949+07	2022-04-04 12:41:23.516949+07	\N	7	tony	$2a$10$eW9tGKowAvNXXTd0dY.aMe5ugjYwqBOjvXfipJeuXNb3WRKswZM2G
+8	2022-04-04 12:41:23.583085+07	2022-04-04 12:41:23.583085+07	\N	8	andy	$2a$10$uJUcOJQzTNE34zN3iMZDnuEzLoH9faE.wOPHvEoAr/cdbqX/u5tDO
+9	2022-04-04 12:41:23.668358+07	2022-04-04 12:41:23.668358+07	\N	9	anya	$2a$10$Xe2mYe80nTdjSfZ1Ux7VKO9psC/RPtxuZeGRLsTwxX72W95lvY27m
 \.
 
 
@@ -804,15 +857,15 @@ COPY public.user_credentials (id, created_at, updated_at, deleted_at, user_id, u
 --
 
 COPY public.users (id, created_at, updated_at, deleted_at, full_name, username, email) FROM stdin;
-1	2022-04-03 09:50:39.758057+07	2022-04-03 09:50:39.758057+07	\N	John Doe	john	john@mail.com
-2	2022-04-03 09:50:39.758057+07	2022-04-03 09:50:39.758057+07	\N	Mary Sue	mary	mary@mail.com
-3	2022-04-03 09:50:39.758057+07	2022-04-03 09:50:39.758057+07	\N	Xi Ng	xi	nihaoma@mail.com
-4	2022-04-03 09:50:39.758057+07	2022-04-03 09:50:39.758057+07	\N	Mark Bob	mark	mark@mail.com
-5	2022-04-03 09:50:39.758057+07	2022-04-03 09:50:39.758057+07	\N	Patricia Ng	ng	ng@mail.com
-6	2022-04-03 09:50:39.758057+07	2022-04-03 09:50:39.758057+07	\N	Jack Tyler	jack	jack@mail.com
-7	2022-04-03 09:50:39.758057+07	2022-04-03 09:50:39.758057+07	\N	Tony Like	tony	tony@mail.com
-8	2022-04-03 09:50:39.758057+07	2022-04-03 09:50:39.758057+07	\N	Andy Lim	andy	andy@mail.com
-9	2022-04-03 09:50:40.295949+07	2022-04-03 09:50:40.295949+07	\N	anya	anya	riidloa@gmail.com
+1	2022-04-04 12:41:22.97689+07	2022-04-04 12:41:22.97689+07	\N	John Doe	john	john@mail.com
+2	2022-04-04 12:41:22.97689+07	2022-04-04 12:41:22.97689+07	\N	Mary Sue	mary	mary@mail.com
+3	2022-04-04 12:41:22.97689+07	2022-04-04 12:41:22.97689+07	\N	Xi Ng	xi	nihaoma@mail.com
+4	2022-04-04 12:41:22.97689+07	2022-04-04 12:41:22.97689+07	\N	Mark Bob	mark	mark@mail.com
+5	2022-04-04 12:41:22.97689+07	2022-04-04 12:41:22.97689+07	\N	Patricia Ng	ng	ng@mail.com
+6	2022-04-04 12:41:22.97689+07	2022-04-04 12:41:22.97689+07	\N	Jack Tyler	jack	jack@mail.com
+7	2022-04-04 12:41:22.97689+07	2022-04-04 12:41:22.97689+07	\N	Tony Like	tony	tony@mail.com
+8	2022-04-04 12:41:22.97689+07	2022-04-04 12:41:22.97689+07	\N	Andy Lim	andy	andy@mail.com
+9	2022-04-04 12:41:23.592844+07	2022-04-04 12:41:23.592844+07	\N	anya	anya	riidloa@gmail.com
 \.
 
 
@@ -848,21 +901,21 @@ SELECT pg_catalog.setval('public.countries_id_seq', 10, true);
 -- Name: merchants_id_seq; Type: SEQUENCE SET; Schema: public; Owner: anya
 --
 
-SELECT pg_catalog.setval('public.merchants_id_seq', 1, false);
+SELECT pg_catalog.setval('public.merchants_id_seq', 3, true);
 
 
 --
 -- Name: payments_id_seq; Type: SEQUENCE SET; Schema: public; Owner: anya
 --
 
-SELECT pg_catalog.setval('public.payments_id_seq', 1, false);
+SELECT pg_catalog.setval('public.payments_id_seq', 8, true);
 
 
 --
 -- Name: products_id_seq; Type: SEQUENCE SET; Schema: public; Owner: anya
 --
 
-SELECT pg_catalog.setval('public.products_id_seq', 1, false);
+SELECT pg_catalog.setval('public.products_id_seq', 6, true);
 
 
 --
@@ -876,7 +929,7 @@ SELECT pg_catalog.setval('public.roles_id_seq', 9, true);
 -- Name: shipments_id_seq; Type: SEQUENCE SET; Schema: public; Owner: anya
 --
 
-SELECT pg_catalog.setval('public.shipments_id_seq', 1, false);
+SELECT pg_catalog.setval('public.shipments_id_seq', 7, true);
 
 
 --
@@ -905,6 +958,14 @@ SELECT pg_catalog.setval('public.user_credentials_id_seq', 9, true);
 --
 
 SELECT pg_catalog.setval('public.users_id_seq', 9, true);
+
+
+--
+-- Name: cart_items cart_items_pkey; Type: CONSTRAINT; Schema: public; Owner: anya
+--
+
+ALTER TABLE ONLY public.cart_items
+    ADD CONSTRAINT cart_items_pkey PRIMARY KEY (id);
 
 
 --
@@ -1107,19 +1168,19 @@ CREATE INDEX idx_users_deleted_at ON public.users USING btree (deleted_at);
 
 
 --
+-- Name: cart_items fk_cart_items_cart; Type: FK CONSTRAINT; Schema: public; Owner: anya
+--
+
+ALTER TABLE ONLY public.cart_items
+    ADD CONSTRAINT fk_cart_items_cart FOREIGN KEY (cart_id) REFERENCES public.carts(id) ON DELETE CASCADE;
+
+
+--
 -- Name: cart_items fk_cart_items_product; Type: FK CONSTRAINT; Schema: public; Owner: anya
 --
 
 ALTER TABLE ONLY public.cart_items
     ADD CONSTRAINT fk_cart_items_product FOREIGN KEY (product_id) REFERENCES public.products(id) ON DELETE CASCADE;
-
-
---
--- Name: cart_items fk_carts_cart_items; Type: FK CONSTRAINT; Schema: public; Owner: anya
---
-
-ALTER TABLE ONLY public.cart_items
-    ADD CONSTRAINT fk_carts_cart_items FOREIGN KEY (cart_id) REFERENCES public.carts(id);
 
 
 --
@@ -1160,6 +1221,22 @@ ALTER TABLE ONLY public.merchant_addresses
 
 ALTER TABLE ONLY public.merchants
     ADD CONSTRAINT fk_merchants_user FOREIGN KEY (admin_id) REFERENCES public.users(id) ON DELETE CASCADE;
+
+
+--
+-- Name: product_reviews fk_product_reviews_product; Type: FK CONSTRAINT; Schema: public; Owner: anya
+--
+
+ALTER TABLE ONLY public.product_reviews
+    ADD CONSTRAINT fk_product_reviews_product FOREIGN KEY (product_id) REFERENCES public.products(id) ON DELETE CASCADE;
+
+
+--
+-- Name: product_reviews fk_product_reviews_user; Type: FK CONSTRAINT; Schema: public; Owner: anya
+--
+
+ALTER TABLE ONLY public.product_reviews
+    ADD CONSTRAINT fk_product_reviews_user FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
 
 
 --
