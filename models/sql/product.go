@@ -66,3 +66,22 @@ func GetMerchantProducts(db *gorm.DB, data *[]models.ProductOutput, m *Merchant,
 
 	return nil
 }
+
+func GetDetailedProduct(db *gorm.DB, data *models.MerchantProductOutput, m *Merchant, p *Product) error {
+	data.Name = m.Name
+	data.ID = m.ID
+
+	data.Product = models.ProductDetailOutput{
+		Name:   p.Name,
+		Desc:   p.Desc,
+		Price:  p.Price,
+		Rating: p.Rating,
+		Stock:  p.Stock,
+	}
+
+	return nil
+}
+
+func DeleteProductById(db *gorm.DB, p *Product) error {
+	return db.Unscoped().Where("merchant_id = ?", p.MerchantID).Delete(p).Error
+}

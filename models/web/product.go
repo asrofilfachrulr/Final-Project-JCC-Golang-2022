@@ -1,6 +1,11 @@
 package models
 
 type (
+	MerchantProductOutput struct {
+		ID      uint                `json:"id"`
+		Name    string              `json:"name"`
+		Product ProductDetailOutput `json:"product"`
+	}
 	ProductOutput struct {
 		ID     uint    `json:"id"`
 		Name   string  `json:"name"`

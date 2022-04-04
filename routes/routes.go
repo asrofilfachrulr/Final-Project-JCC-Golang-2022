@@ -83,8 +83,10 @@ func InitRoute(db *gorm.DB) *gin.Engine {
 
 	// /products
 	api.GET("/merchants/:id/products", controllers.GetProductsByMerchantId)
-	products := api.Group("/merchants/:id/products")
+	api.GET("/merchants/:id/products/:productId", controllers.GetProductDetailById)
+	products := api.Group("/merchants/:id/products/:productId")
 	products.Use(middleware.JWTMerchantMiddleware())
+	products.DELETE("/", controllers.DeleteProductById)
 
 	// swagger route
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

@@ -161,6 +161,19 @@ definitions:
       rating:
         type: number
     type: object
+  models.ProductDetailOutput:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      price:
+        type: integer
+      rating:
+        type: integer
+      stock:
+        type: integer
+    type: object
   models.ProductOutput:
     properties:
       id:
@@ -782,7 +795,7 @@ paths:
       - Merchant
   /merchants/{id}/products:
     get:
-      description: Get all avalaible merchants.
+      description: Get all avalaible products of a merchant.
       parameters:
       - description: merchant id
         in: path
@@ -812,9 +825,70 @@ paths:
                     $ref: '#/definitions/models.ProductOutput'
                   type: array
               type: object
-      summary: Get all avalaible merchants.
+      summary: Get all avalaible products of a merchant.
       tags:
-      - Merchant
+      - Product
+  /merchants/{id}/products/{productId}:
+    delete:
+      description: remove a product.
+      parameters:
+      - description: merchant id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: product id
+        in: path
+        name: productId
+        required: true
+        type: integer
+      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_jwt_token_here>'''
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.RespWithData'
+      security:
+      - BearerToken: []
+      summary: remove a product.
+      tags:
+      - Product
+    get:
+      description: Get detailed product.
+      parameters:
+      - description: merchant id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: product id
+        in: path
+        name: productId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.RespWithData'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.ProductDetailOutput'
+                  type: array
+              type: object
+      summary: Get detailed product.
+      tags:
+      - Product
   /merchants/my:
     get:
       description: Get user's merchant.

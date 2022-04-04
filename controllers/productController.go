@@ -15,7 +15,7 @@ import (
 // @Description Get all avalaible products of a merchant.
 // @Param id path uint true "merchant id"
 // @Param _ query wmodels.ProductFilter false "filter products"
-// @Tags Merchant
+// @Tags Product
 // @Produce json
 // @Success 200 {object} utils.RespWithData{data=[]wmodels.ProductOutput}
 // @Router /merchants/{id}/products [GET]
@@ -72,53 +72,161 @@ func GetProductsByMerchantId(c *gin.Context) {
 	})
 }
 
-// // Register godoc
-// // @Summary Get detailed product.
-// // @Description Get detailed product.
-// // @Param id path uint true "merchant id"
-// // @Tags Merchant
-// // @Produce json
-// // @Success 200 {object} utils.RespWithData{data=[]wmodels.ProductDetailOutput}
-// // @Router /merchants/{id}/products/{productId} [GET]
-// func GetProductsByProductId(c *gin.Context) {
-// 	db := c.MustGet("db").(*gorm.DB)
+// Register godoc
+// @Summary Get detailed product.
+// @Description Get detailed product.
+// @Param id path uint true "merchant id"
+// @Param productId path uint true "product id"
+// @Tags Product
+// @Produce json
+// @Success 200 {object} utils.RespWithData{data=[]wmodels.ProductDetailOutput}
+// @Router /merchants/{id}/products/{productId} [GET]
+func GetProductDetailById(c *gin.Context) {
+	db := c.MustGet("db").(*gorm.DB)
 
-// 	var merchantId uint = 0
-// 	if v := c.Param("id"); v == "" {
-// 		return
-// 	} else {
-// 		if n, err := utils.StringToUint(v); err != nil {
-// 			c.JSON(http.StatusNotFound, gin.H{
-// 				"error": "merchant id not found",
-// 			})
-// 			return
-// 		} else {
-// 			merchantId = n
-// 		}
-// 	}
+	var merchantId uint = 0
+	if v := c.Param("id"); v == "" {
+		return
+	} else {
+		if n, err := utils.StringToUint(v); err != nil {
+			c.JSON(http.StatusNotFound, gin.H{
+				"error": "merchant id not found",
+			})
+			return
+		} else {
+			merchantId = n
+		}
+	}
 
-// 	// look up merchant
-// 	merchant := models.Merchant{}
-// 	merchant.ID = merchantId
+	// look up merchant
+	merchant := models.Merchant{}
+	merchant.ID = merchantId
 
-// 	if err := db.First(&merchant).Error; err != nil {
-// 		c.JSON(http.StatusNotFound, gin.H{
-// 			"error": err.Error(),
-// 		})
-// 		return
-// 	}
+	if err := db.First(&merchant).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
 
-// 	mproducts := &[]wmodels.ProductOutput{}
-// 	if err := models.GetMerchantProducts(db, mproducts, &merchant); err != nil {
-// 		c.JSON(http.StatusInternalServerError, gin.H{
-// 			"error": err.Error(),
-// 		})
-// 		return
-// 	}
+	var productId uint = 0
+	if v := c.Param("productId"); v == "" {
+		return
+	} else {
+		if n, err := utils.StringToUint(v); err != nil {
+			c.JSON(http.StatusNotFound, gin.H{
+				"error": "merchant id not found",
+			})
+			return
+		} else {
+			productId = n
+		}
+	}
 
-// 	c.JSON(http.StatusOK, utils.RespWithData{
-// 		Status:  "success",
-// 		Message: "sukses mendapat daftar produk",
-// 		Data:    *mproducts,
-// 	})
-// }
+	// look up product
+	product := models.Product{}
+	product.ID = productId
+
+	if err := db.First(&product).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	detailp := &wmodels.MerchantProductOutput{}
+	if err := models.GetDetailedProduct(db, detailp, &merchant, &product); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, utils.RespWithData{
+		Status:  "success",
+		Message: "sukses mendapat detail produk",
+		Data:    *detailp,
+	})
+}
+
+// Register godoc
+// @Summary remove a product.
+// @Description remove a product.
+// @Param id path uint true "merchant id"
+// @Param productId path uint true "product id"
+// @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_jwt_token_here>'"
+// @Security BearerToken
+// @Tags Product
+// @Produce json
+// @Success 200 {object} utils.RespWithData
+// @Router /merchants/{id}/products/{productId} [DELETE]
+func DeleteProductById(c *gin.Context) {
+	db := c.MustGet("db").(*gorm.DB)
+
+	var merchantId uint = 0
+	if v := c.Param("id"); v == "" {
+		return
+	} else {
+		if n, err := utils.StringToUint(v); err != nil {
+			c.JSON(http.StatusNotFound, gin.H{
+				"error": "merchant id not found",
+			})
+			return
+		} else {
+			merchantId = n
+		}
+	}
+
+	// look up merchant
+	merchant := models.Merchant{}
+	merchant.ID = merchantId
+
+	if err := db.First(&merchant).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	var productId uint = 0
+	if v := c.Param("productId"); v == "" {
+		return
+	} else {
+		if n, err := utils.StringToUint(v); err != nil {
+			c.JSON(http.StatusNotFound, gin.H{
+				"error": "product id not found",
+			})
+			return
+		} else {
+			productId = n
+		}
+	}
+
+	// look up product
+	product := models.Product{}
+	product.ID = productId
+
+	if err := db.First(&product).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	product.MerchantID = merchantId
+	if err := models.DeleteProductById(db, &product); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, utils.RespWithData{
+		Status:  "success",
+		Message: "sukses menghapus produk",
+		Data: gin.H{
+			"id":   product.ID,
+			"name": product.Name,
+		},
+	})
+}
