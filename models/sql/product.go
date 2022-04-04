@@ -1,7 +1,7 @@
 package models
 
 import (
-	wmodels "anya-day/models/web"
+	models "anya-day/models/web"
 
 	"gorm.io/gorm"
 )
@@ -20,7 +20,7 @@ type (
 	}
 )
 
-func GetMerchantProducts(db *gorm.DB, data *[]wmodels.ProductOutput, m *Merchant) error {
+func GetMerchantProducts(db *gorm.DB, data *[]models.ProductOutput, m *Merchant) error {
 	db.First(m)
 
 	if err := db.
