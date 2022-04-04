@@ -905,6 +905,50 @@ const docTemplate = `{
                 }
             }
         },
+        "/merchants/{id}/products": {
+            "get": {
+                "description": "Get all avalaible merchants.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Merchant"
+                ],
+                "summary": "Get all avalaible merchants.",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "merchant id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/utils.RespWithData"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/models.ProductOutput"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/register": {
             "post": {
                 "description": "registering a new user",
@@ -1485,6 +1529,20 @@ const docTemplate = `{
                 },
                 "rating": {
                     "type": "number"
+                }
+            }
+        },
+        "models.ProductOutput": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "integer"
                 }
             }
         },

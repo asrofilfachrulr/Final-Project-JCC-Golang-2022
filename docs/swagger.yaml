@@ -161,6 +161,15 @@ definitions:
       rating:
         type: number
     type: object
+  models.ProductOutput:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      price:
+        type: integer
+    type: object
   models.RegisterInput:
     properties:
       email:
@@ -767,6 +776,32 @@ paths:
       security:
       - BearerToken: []
       summary: update an existing merchant.
+      tags:
+      - Merchant
+  /merchants/{id}/products:
+    get:
+      description: Get all avalaible merchants.
+      parameters:
+      - description: merchant id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.RespWithData'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.ProductOutput'
+                  type: array
+              type: object
+      summary: Get all avalaible merchants.
       tags:
       - Merchant
   /merchants/my:

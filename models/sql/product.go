@@ -1,6 +1,10 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	wmodels "anya-day/models/web"
+
+	"gorm.io/gorm"
+)
 
 type (
 	Product struct {
@@ -9,8 +13,23 @@ type (
 		MerchantID uint   `gorm:"not null"`
 		Price      uint   `gorm:"not null"`
 		Desc       string
+		Stock      uint     `gorm:"not null"`
 		CategoryID uint     `gorm:"not null"`
 		Merchant   Merchant `gorm:"constraint:OnDelete:CASCADE"`
 		Category   Category
 	}
 )
+
+func GetMerchantProducts(db *gorm.DB, data *[]wmodels.ProductOutput, m *Merchant) error {
+	db.First(m)
+
+	if err := db.
+		Model(&Product{}).
+		Select("id", "name", "price").
+		Where("merchant_id = ?", m.ID).
+		Find(data).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
