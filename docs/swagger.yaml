@@ -161,6 +161,16 @@ definitions:
       rating:
         type: number
     type: object
+  models.PostReview:
+    properties:
+      rating:
+        type: number
+      review:
+        type: string
+    required:
+    - rating
+    - review
+    type: object
   models.ProductDetailOutput:
     properties:
       description:
@@ -170,7 +180,7 @@ definitions:
       price:
         type: integer
       rating:
-        type: integer
+        type: number
       stock:
         type: integer
     type: object
@@ -889,6 +899,66 @@ paths:
       summary: Get detailed product.
       tags:
       - Product
+  /merchants/{id}/products/{productId}/review:
+    get:
+      description: get list of reviews of a product.
+      parameters:
+      - description: merchant id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: product id
+        in: path
+        name: productId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.RespWithData'
+      summary: get list of reviews of a product.
+      tags:
+      - Review
+    post:
+      description: post a review of a product.
+      parameters:
+      - description: merchant id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Post a review
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/models.PostReview'
+      - description: product id
+        in: path
+        name: productId
+        required: true
+        type: integer
+      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_jwt_token_here>'''
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/utils.NormalResp'
+      security:
+      - BearerToken: []
+      summary: post a review of a product.
+      tags:
+      - Review
   /merchants/my:
     get:
       description: Get user's merchant.

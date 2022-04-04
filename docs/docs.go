@@ -1061,6 +1061,97 @@ const docTemplate = `{
                 }
             }
         },
+        "/merchants/{id}/products/{productId}/review": {
+            "get": {
+                "description": "get list of reviews of a product.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Review"
+                ],
+                "summary": "get list of reviews of a product.",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "merchant id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "product id",
+                        "name": "productId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/utils.RespWithData"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerToken": []
+                    }
+                ],
+                "description": "post a review of a product.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Review"
+                ],
+                "summary": "post a review of a product.",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "merchant id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Post a review",
+                        "name": "Body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.PostReview"
+                        }
+                    },
+                    {
+                        "type": "integer",
+                        "description": "product id",
+                        "name": "productId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Authorization. How to input in swagger : 'Bearer \u003cinsert_your_jwt_token_here\u003e'",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/utils.NormalResp"
+                        }
+                    }
+                }
+            }
+        },
         "/register": {
             "post": {
                 "description": "registering a new user",
@@ -1644,6 +1735,21 @@ const docTemplate = `{
                 }
             }
         },
+        "models.PostReview": {
+            "type": "object",
+            "required": [
+                "rating",
+                "review"
+            ],
+            "properties": {
+                "rating": {
+                    "type": "number"
+                },
+                "review": {
+                    "type": "string"
+                }
+            }
+        },
         "models.ProductDetailOutput": {
             "type": "object",
             "properties": {
@@ -1657,7 +1763,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "rating": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "stock": {
                     "type": "integer"

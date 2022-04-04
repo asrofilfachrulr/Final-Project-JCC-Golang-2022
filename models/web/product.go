@@ -13,11 +13,11 @@ type (
 		Rating float32 `json:"rating"`
 	}
 	ProductDetailOutput struct {
-		Name   string `json:"name"`
-		Price  uint   `json:"price"`
-		Stock  uint   `json:"stock"`
-		Rating uint   `json:"rating,omitempty"`
-		Desc   string `json:"description"`
+		Name   string  `json:"name"`
+		Price  uint    `json:"price"`
+		Stock  uint    `json:"stock"`
+		Rating float32 `json:"rating,omitempty"`
+		Desc   string  `json:"description"`
 	}
 	ProductFilter struct {
 		Price  *string `query:"price"`

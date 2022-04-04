@@ -18,7 +18,7 @@ type (
 		MerchantID uint   `gorm:"not null"`
 		Price      uint   `gorm:"not null"`
 		Desc       string
-		Rating     uint
+		Rating     float32
 		Stock      uint     `gorm:"not null"`
 		CategoryID uint     `gorm:"not null"`
 		Merchant   Merchant `gorm:"constraint:OnDelete:CASCADE"`
