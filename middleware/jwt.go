@@ -66,6 +66,13 @@ func JWTMerchantMiddleware() gin.HandlerFunc {
 			return
 		}
 
+		// by pass authorization
+		if ctx.Request.Method == "POST" || ctx.Request.Method == "GET" {
+			log.Println("by pass authorization")
+			ctx.Next()
+			return
+		}
+
 		uid, err := token.ExtractUID(ctx)
 		if err != nil {
 			ctx.JSON(http.StatusUnauthorized, gin.H{
@@ -83,6 +90,7 @@ func JWTMerchantMiddleware() gin.HandlerFunc {
 
 		log.Println("not a dev")
 
+		// authorization check
 		db := ctx.MustGet("db").(*gorm.DB)
 
 		var merchant models.Merchant

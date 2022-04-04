@@ -652,6 +652,105 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerToken": []
+                    }
+                ],
+                "description": "create a complete merchant with the address of an existing user.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Merchant"
+                ],
+                "summary": "create a complete merchant.",
+                "parameters": [
+                    {
+                        "description": "Insert new merchant info. only name and country are required",
+                        "name": "Body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.MerchantInput"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Authorization. How to input in swagger : 'Bearer \u003cinsert_your_jwt_token_here\u003e'",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/utils.RespWithData"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.IDTemplate"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/merchants/my": {
+            "get": {
+                "security": [
+                    {
+                        "BearerToken": []
+                    }
+                ],
+                "description": "Get user's merchant.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Merchant"
+                ],
+                "summary": "Get user's merchant.",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authorization. How to input in swagger : 'Bearer \u003cinsert_your_jwt_token_here\u003e'",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/utils.RespWithData"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.MerchantDetailsOutput"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
             }
         },
         "/merchants/{id}": {
@@ -694,13 +793,73 @@ const docTemplate = `{
                     }
                 }
             },
+            "put": {
+                "security": [
+                    {
+                        "BearerToken": []
+                    }
+                ],
+                "description": "update merchant information field of an existing merchant.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Merchant"
+                ],
+                "summary": "update an existing merchant.",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "merchant id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Update desired field",
+                        "name": "Body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.MerchantInputNoBinding"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Authorization. How to input in swagger : 'Bearer \u003cinsert_your_jwt_token_here\u003e'",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/utils.RespWithData"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.MerchantInputNoBinding"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
             "delete": {
                 "security": [
                     {
                         "BearerToken": []
                     }
                 ],
-                "description": "Delete an existing merchant.",
+                "description": "Delete an existing merchant. This revert user to customer",
                 "produces": [
                     "application/json"
                 ],
@@ -1200,6 +1359,17 @@ const docTemplate = `{
                 }
             }
         },
+        "models.IDTemplate": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
         "models.LoginInput": {
             "type": "object",
             "required": [
@@ -1260,6 +1430,44 @@ const docTemplate = `{
                 },
                 "rating": {
                     "type": "number"
+                }
+            }
+        },
+        "models.MerchantInput": {
+            "type": "object",
+            "required": [
+                "country",
+                "name"
+            ],
+            "properties": {
+                "address_line": {
+                    "type": "string"
+                },
+                "city": {
+                    "type": "string"
+                },
+                "country": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.MerchantInputNoBinding": {
+            "type": "object",
+            "properties": {
+                "address_line": {
+                    "type": "string"
+                },
+                "city": {
+                    "type": "string"
+                },
+                "country": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
                 }
             }
         },

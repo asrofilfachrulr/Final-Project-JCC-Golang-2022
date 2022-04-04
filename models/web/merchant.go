@@ -5,9 +5,15 @@ type (
 		ID   uint   `json:"id"`
 		Name string `json:"name"`
 	}
-	MerchantCreateInput struct {
+	MerchantInput struct {
 		Name        string `json:"name" binding:"required"`
 		Country     uint   `json:"country" binding:"required"`
+		City        string `json:"city"`
+		AddressLine string `json:"address_line"`
+	}
+	MerchantInputNoBinding struct {
+		Name        string `json:"name"`
+		Country     uint   `json:"country"`
 		City        string `json:"city"`
 		AddressLine string `json:"address_line"`
 	}

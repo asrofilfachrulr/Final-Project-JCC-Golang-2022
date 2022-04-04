@@ -77,6 +77,13 @@ definitions:
     - new_password
     - password
     type: object
+  models.IDTemplate:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
   models.LoginInput:
     properties:
       password:
@@ -117,6 +124,31 @@ definitions:
         type: string
       rating:
         type: number
+    type: object
+  models.MerchantInput:
+    properties:
+      address_line:
+        type: string
+      city:
+        type: string
+      country:
+        type: integer
+      name:
+        type: string
+    required:
+    - country
+    - name
+    type: object
+  models.MerchantInputNoBinding:
+    properties:
+      address_line:
+        type: string
+      city:
+        type: string
+      country:
+        type: integer
+      name:
+        type: string
     type: object
   models.MerchantOutput:
     properties:
@@ -616,9 +648,40 @@ paths:
       summary: Get all avalaible merchants.
       tags:
       - Merchant
+    post:
+      description: create a complete merchant with the address of an existing user.
+      parameters:
+      - description: Insert new merchant info. only name and country are required
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/models.MerchantInput'
+      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_jwt_token_here>'''
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.RespWithData'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.IDTemplate'
+              type: object
+      security:
+      - BearerToken: []
+      summary: create a complete merchant.
+      tags:
+      - Merchant
   /merchants/{id}:
     delete:
-      description: Delete an existing merchant.
+      description: Delete an existing merchant. This revert user to customer
       parameters:
       - description: merchant id
         in: path
@@ -668,6 +731,68 @@ paths:
                   $ref: '#/definitions/models.MerchantDetailsOutput'
               type: object
       summary: Get specific merchant.
+      tags:
+      - Merchant
+    put:
+      description: update merchant information field of an existing merchant.
+      parameters:
+      - description: merchant id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update desired field
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/models.MerchantInputNoBinding'
+      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_jwt_token_here>'''
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.RespWithData'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.MerchantInputNoBinding'
+              type: object
+      security:
+      - BearerToken: []
+      summary: update an existing merchant.
+      tags:
+      - Merchant
+  /merchants/my:
+    get:
+      description: Get user's merchant.
+      parameters:
+      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_jwt_token_here>'''
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.RespWithData'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.MerchantDetailsOutput'
+              type: object
+      security:
+      - BearerToken: []
+      summary: Get user's merchant.
       tags:
       - Merchant
   /register:
