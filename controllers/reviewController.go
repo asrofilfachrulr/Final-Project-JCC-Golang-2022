@@ -179,7 +179,7 @@ func GetReview(c *gin.Context) {
 
 	review := &[]wmodels.Review{}
 	// lookup review
-	if err := models.GetReview(db, review); err != nil {
+	if err := models.GetReview(db, review, product.ID); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})

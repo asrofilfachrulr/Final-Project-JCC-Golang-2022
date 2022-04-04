@@ -84,9 +84,10 @@ func InitRoute(db *gorm.DB) *gin.Engine {
 	// /products
 	api.GET("/merchants/:id/products", controllers.GetProductsByMerchantId)
 	api.GET("/merchants/:id/products/:productId", controllers.GetProductDetailById)
-	products := api.Group("/merchants/:id/products/:productId")
+	products := api.Group("/merchants/:id/products")
 	products.Use(middleware.JWTMerchantMiddleware())
-	products.DELETE("/", controllers.DeleteProductById)
+	products.POST("/", controllers.CreateProduct)
+	products.DELETE("/:productId", controllers.DeleteProductById)
 
 	// /route
 	review := products.Group("/review")

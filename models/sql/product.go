@@ -26,6 +26,10 @@ type (
 	}
 )
 
+func (p *Product) PostProduct(db *gorm.DB) error {
+	return db.Save(p).Error
+}
+
 func GetMerchantProducts(db *gorm.DB, data *[]models.ProductOutput, m *Merchant, filter *models.ProductFilter) error {
 	db.First(m)
 

@@ -184,6 +184,24 @@ definitions:
       stock:
         type: integer
     type: object
+  models.ProductInput:
+    properties:
+      category_id:
+        type: integer
+      description:
+        type: string
+      name:
+        type: string
+      price:
+        type: integer
+      stock:
+        type: integer
+    required:
+    - category_id
+    - name
+    - price
+    - stock
+    type: object
   models.ProductOutput:
     properties:
       id:
@@ -836,6 +854,42 @@ paths:
                   type: array
               type: object
       summary: Get all avalaible products of a merchant.
+      tags:
+      - Product
+    post:
+      description: Post new products of a merchant.
+      parameters:
+      - description: merchant id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Enter Product Details
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/models.ProductInput'
+      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_jwt_token_here>'''
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.RespWithData'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.ProductOutput'
+              type: object
+      security:
+      - BearerToken: []
+      summary: Post new products of a merchant.
       tags:
       - Product
   /merchants/{id}/products/{productId}:

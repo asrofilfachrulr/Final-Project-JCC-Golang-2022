@@ -11,6 +11,81 @@ import (
 )
 
 // Register godoc
+// @Summary Post new products of a merchant.
+// @Description Post new products of a merchant.
+// @Param id path uint true "merchant id"
+// @Param Body body wmodels.ProductInput true "Enter Product Details"
+// @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_jwt_token_here>'"
+// @Security BearerToken
+// @Tags Product
+// @Produce json
+// @Success 200 {object} utils.RespWithData{data=wmodels.ProductOutput}
+// @Router /merchants/{id}/products [POST]
+func CreateProduct(c *gin.Context) {
+	db := c.MustGet("db").(*gorm.DB)
+
+	var merchantId uint = 0
+	if v := c.Param("id"); v == "" {
+		return
+	} else {
+		if n, err := utils.StringToUint(v); err != nil {
+			c.JSON(http.StatusNotFound, gin.H{
+				"error": "merchant id not found",
+			})
+			return
+		} else {
+			merchantId = n
+		}
+	}
+
+	// look up merchant
+	merchant := models.Merchant{}
+	merchant.ID = merchantId
+
+	if err := db.First(&merchant).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	var input wmodels.ProductInput
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	p := &models.Product{
+		Name:       input.Name,
+		Desc:       input.Desc,
+		MerchantID: merchantId,
+		Price:      input.Price,
+		Stock:      input.Stock,
+		CategoryID: input.CategoryID,
+	}
+
+	if err := p.PostProduct(db); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusCreated, utils.RespWithData{
+		Status:  "success",
+		Message: "berhasil menambahkan produk",
+		Data: wmodels.ProductOutput{
+			ID:     p.ID,
+			Name:   p.Name,
+			Price:  p.Price,
+			Rating: p.Rating,
+		},
+	})
+}
+
+// Register godoc
 // @Summary Get all avalaible products of a merchant.
 // @Description Get all avalaible products of a merchant.
 // @Param id path uint true "merchant id"
