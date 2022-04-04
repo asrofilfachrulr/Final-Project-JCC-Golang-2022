@@ -85,6 +85,13 @@ func CreateProductReview(c *gin.Context) {
 		return
 	}
 
+	if uid == merchant.AdminId {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "anda tidak bisa memberi review pada produk anda sendiri",
+		})
+		return
+	}
+
 	review := models.ProductReview{
 		UserID:    uid,
 		ProductID: product.ID,
