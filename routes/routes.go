@@ -4,7 +4,7 @@ import (
 	"anya-day/controllers"
 	"anya-day/middleware"
 	models "anya-day/models/sql"
-	"anya-day/utils"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
@@ -16,7 +16,7 @@ func InitRoute(db *gorm.DB) *gin.Engine {
 	r := gin.Default()
 
 	r.GET("/", func(ctx *gin.Context) {
-		ctx.Data(200, "text/plain", []byte(utils.GetEnvWithFallback("HELLO", "hello")))
+		ctx.Redirect(http.StatusMovedPermanently, "/swagger/index.html")
 	})
 
 	r.Use(func(c *gin.Context) {
