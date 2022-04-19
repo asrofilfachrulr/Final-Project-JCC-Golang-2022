@@ -8,3 +8,9 @@ type RegisterUserInput struct {
 	AddressLine string `json:"address_line"`
 	Password    string `json:"password" binding:"required"`
 }
+
+type RegisterUserOutput struct {
+	ID       uint   `json:"id"`
+	Username string `json:"username"`
+	Email    string `json:"email"`
+}
