@@ -5,6 +5,7 @@ import (
 	"anya-day/routes"
 	"anya-day/utils"
 	"flag"
+	"log"
 	"os"
 
 	"anya-day/docs"
@@ -12,8 +13,38 @@ import (
 	"github.com/joho/godotenv"
 )
 
+func init() {
+	env := utils.GetEnvWithFallback("ENVIRONMENT", "development")
+	if env == "development" {
+		err := godotenv.Load()
+		if err != nil {
+			// exit program in fail load .env
+			log.Fatalln(err.Error())
+		}
+
+		// set schemes only http if run in local
+		docs.SwaggerInfo.Schemes = []string{"http"}
+
+		// set debug mode by given flag
+		debugMode := flag.String("d", "", "")
+		// drop all table before migration
+		drop := flag.String("drop", "", "")
+		flag.Parse()
+
+		// set to this runtime env
+		os.Setenv("DEBUG_MODE", *debugMode)
+		os.Setenv("DROP", *drop)
+	} else {
+		// set schemes only https if run in production
+		docs.SwaggerInfo.Schemes = []string{"https"}
+	}
+
+	// get host url from env
+	docs.SwaggerInfo.Host = utils.GetEnvWithFallback("SWAGGER_HOST", "localhost:8080")
+}
+
 // @title Anya Day API
-// @version beta
+// @version 2.0
 // @description API which provide you backend service for your minimalist ecommerce app
 
 // @contact.name Developer
@@ -21,36 +52,16 @@ import (
 
 // @BasePath /api/v1
 func main() {
-	env := utils.GetEnvWithFallback("ENVIRONMENT", "development")
-	if env == "development" {
-		err := godotenv.Load()
-		if err != nil {
-			panic(err.Error())
-		}
-		docs.SwaggerInfo.Schemes = []string{"http"}
-
-		dropMode := flag.String("drop", "nope", "drop all tables and seeding the db if set to DROP, for debugging purpose")
-		debugMode := flag.String("d", "nope", "logging every sql operation if set to DEBUG")
-		initDBMode := flag.String("initdb", "nope", "seeding db whether with dummies only (USERS) or dev users too (USERS_DEV)")
-		flag.Parse()
-
-		os.Setenv("DROP_TABLES", *dropMode)
-		os.Setenv("DEBUG_MODE", *debugMode)
-		os.Setenv("INIT_DB", *initDBMode)
-	} else {
-		docs.SwaggerInfo.Schemes = []string{"https"}
-	}
-
 	db := config.ConnectDataBase()
 
 	sqlDB, _ := db.DB()
 	defer sqlDB.Close()
 
-	config.Load(db)
+	r := routes.Init(db)
 
-	docs.SwaggerInfo.Host = utils.GetEnvWithFallback("SWAGGER_HOST", "localhost:8080")
-
-	r := routes.InitRoute(db)
+	routes.Attach(r, map[string]any{
+		"db": db,
+	})
 
 	r.Run()
 }
