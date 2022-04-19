@@ -2,7 +2,6 @@ package main
 
 import (
 	"anya-day/config"
-	"anya-day/routes"
 	"anya-day/utils"
 	"flag"
 	"log"
@@ -52,16 +51,7 @@ func init() {
 
 // @BasePath /api/v1
 func main() {
-	db := config.ConnectDataBase()
-
-	sqlDB, _ := db.DB()
-	defer sqlDB.Close()
-
-	r := routes.Init(db)
-
-	routes.Attach(r, map[string]any{
-		"db": db,
-	})
-
-	r.Run()
+	server := config.NewServer()
+	server.Init()
+	server.Run()
 }
