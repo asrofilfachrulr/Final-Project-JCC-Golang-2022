@@ -4,19 +4,15 @@ import (
 	"net/http"
 
 	"anya-day/handlers"
-	repo "anya-day/repository"
 
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	"gorm.io/gorm"
 )
 
-// db type inverted to any there is multiple db type
-func AttachRepo(r *gin.Engine, db *gorm.DB) {
+func Attach(r *gin.Engine, key string, data any) {
 	r.Use(func(ctx *gin.Context) {
-		ctx.Set("user_repo", repo.NewUserRepo(db))
-		ctx.Set("user_cred_repo", repo.NewUserCredRepo(db))
+		ctx.Set(key, data)
 	})
 }
 
