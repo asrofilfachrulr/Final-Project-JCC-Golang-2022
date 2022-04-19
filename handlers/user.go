@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"anya-day/helper"
 	sqlModels "anya-day/models/sql"
 	webModels "anya-day/models/web"
 	repo "anya-day/repository"
@@ -8,6 +9,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 // Register godoc
@@ -19,9 +21,22 @@ import (
 // @Success 201 {object} webModels.WithDataResp{data=webModels.RegisterUserOutput}
 // @Router /user [post]
 func PostUser(ctx *gin.Context) {
-	// get needed repos for this endpoint
-	userRepo := ctx.MustGet("user_repo").(*repo.UserRepository)
-	userCredRepo := ctx.MustGet("user_cred_repo").(*repo.UserCredentialRepository)
+	// get needed db and begin transaction for this endpoint
+	tx := ctx.MustGet("db").(*gorm.DB).Begin()
+
+	if err := tx.Error; err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"status": "error",
+			"msg":    err.Error(),
+		})
+		return
+	}
+
+	defer helper.RollbackIfErr(tx)
+
+	// initiate repo with tx
+	userRepo := repo.NewUserRepo(tx)
+	userCredRepo := repo.NewUserCredRepo(tx)
 
 	service := services.NewUserServices(userRepo, userCredRepo)
 
@@ -51,9 +66,11 @@ func PostUser(ctx *gin.Context) {
 			"status": "error",
 			"msg":    err.Error(),
 		})
+		tx.Rollback()
 		return
 	}
 
+	tx.Commit()
 	ctx.JSON(http.StatusCreated, webModels.WithDataResp{
 		Status: "success",
 		Msg:    "user created",
