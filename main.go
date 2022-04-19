@@ -2,7 +2,7 @@ package main
 
 import (
 	"anya-day/config"
-	"anya-day/utils"
+	"anya-day/helper"
 	"flag"
 	"log"
 	"os"
@@ -13,7 +13,7 @@ import (
 )
 
 func init() {
-	env := utils.GetEnvWithFallback("ENVIRONMENT", "development")
+	env := helper.GetEnvWithFallback("ENVIRONMENT", "development")
 	if env == "development" {
 		err := godotenv.Load()
 		if err != nil {
@@ -39,7 +39,7 @@ func init() {
 	}
 
 	// get host url from env
-	docs.SwaggerInfo.Host = utils.GetEnvWithFallback("SWAGGER_HOST", "localhost:8080")
+	docs.SwaggerInfo.Host = helper.GetEnvWithFallback("SWAGGER_HOST", "localhost:8080")
 }
 
 // @title Anya Day API

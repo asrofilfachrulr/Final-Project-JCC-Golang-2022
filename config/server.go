@@ -21,7 +21,7 @@ func (s *Server) Init() {
 	s.DB = db
 
 	s.Router = gin.Default()
-	routes.AttachRepo(s.Router, db)
+	routes.Attach(s.Router, "db", db)
 	routes.InitAPI(s.Router)
 }
 

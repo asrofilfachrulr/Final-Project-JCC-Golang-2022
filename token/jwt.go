@@ -1,7 +1,7 @@
 package token
 
 import (
-	"anya-day/utils"
+	"anya-day/helper"
 	"fmt"
 	"os"
 	"strconv"
@@ -14,7 +14,7 @@ import (
 
 // generate jwt token with HS256 alg
 func GenerateToken(uid int) (string, error) {
-	lifespan := utils.StringToIntIgnore((utils.GetEnvWithFallback("TOKEN_HOUR_LIFESPAN", "1")))
+	lifespan := helper.StringToIntIgnore((helper.GetEnvWithFallback("TOKEN_HOUR_LIFESPAN", "1")))
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"authorized": true,
