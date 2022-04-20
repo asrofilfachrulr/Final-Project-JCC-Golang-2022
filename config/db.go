@@ -48,12 +48,15 @@ func ConnectDataBase() *gorm.DB {
 
 	mode := os.Getenv("DEBUG_MODE")
 	config := ConfigByDebugMode(mode)
+
+	log.Println("Connecting to DB...")
 	db, err := gorm.Open(postgres.Open(dsn), config)
 
 	if err != nil {
 		panic(err.Error())
 	}
 
+	log.Println("Auto migrating...")
 	if err := migrations.Migrate(db); err != nil {
 		log.Fatalln(err)
 	}

@@ -10,3 +10,10 @@ type WithDataResp struct {
 	Msg    string `json:"message"`
 	Data   any    `json:"data"`
 }
+
+func ErrWithMsg(msg string) map[string]string {
+	return map[string]string{
+		"status":  "errror",
+		"message": msg,
+	}
+}

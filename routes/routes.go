@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"log"
 	"net/http"
 
 	"anya-day/handlers"
@@ -17,13 +18,14 @@ func Attach(r *gin.Engine, key string, data any) {
 }
 
 func InitAPI(r *gin.Engine) *gin.Engine {
+	log.Println("Initiating route API...")
 	r.GET("/", func(ctx *gin.Context) {
 		ctx.Redirect(http.StatusMovedPermanently, "/swagger/index.html")
 	})
 
 	api := r.Group("/api/v1")
 
-	api.POST("/user", handlers.PostUser)
+	api.POST("/user", handlers.PostUserHandler)
 
 	// swagger route
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

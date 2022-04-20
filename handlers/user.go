@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"anya-day/helper"
+	"anya-day/http/resp"
 	sqlModels "anya-day/models/sql"
 	webModels "anya-day/models/web"
 	repo "anya-day/repository"
@@ -9,6 +10,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"gopkg.in/go-playground/validator.v9"
 	"gorm.io/gorm"
 )
 
@@ -20,9 +22,10 @@ import (
 // @Produce json
 // @Success 201 {object} webModels.WithDataResp{data=webModels.RegisterUserOutput}
 // @Router /user [post]
-func PostUser(ctx *gin.Context) {
+func PostUserHandler(ctx *gin.Context) {
 	// get needed db and begin transaction for this endpoint
 	tx := ctx.MustGet("db").(*gorm.DB).Begin()
+	v := ctx.MustGet("validator").(*validator.Validate)
 
 	if err := tx.Error; err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
@@ -42,10 +45,12 @@ func PostUser(ctx *gin.Context) {
 
 	var input webModels.RegisterUserInput
 	if err := ctx.ShouldBindJSON(&input); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"status": "error",
-			"msg":    err.Error(),
-		})
+		resp.RespErrWithMsg(ctx, err.Error())
+		return
+	}
+
+	if err := v.Struct(&input); err != nil {
+		resp.RespErrWithMsg(ctx, err.Error())
 		return
 	}
 
@@ -62,15 +67,13 @@ func PostUser(ctx *gin.Context) {
 	}
 
 	if err := service.CreateUser(user, userCred); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"status": "error",
-			"msg":    err.Error(),
-		})
+		resp.RespErrWithMsg(ctx, err.Error(), http.StatusInternalServerError)
 		tx.Rollback()
 		return
 	}
 
 	tx.Commit()
+
 	ctx.JSON(http.StatusCreated, webModels.WithDataResp{
 		Status: "success",
 		Msg:    "user created",

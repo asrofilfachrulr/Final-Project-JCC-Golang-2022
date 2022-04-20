@@ -3,7 +3,6 @@ package services
 import (
 	sqlModel "anya-day/models/sql"
 	repo "anya-day/repository"
-	"fmt"
 )
 
 type UserServices struct {
@@ -24,10 +23,6 @@ func (s *UserServices) CreateUser(user *sqlModel.User, userCred *sqlModel.UserCr
 	}
 
 	userCred.UserID = user.ID
-
-	if len(userCred.Password) < 8 {
-		return fmt.Errorf("password too short (at least 8 characters)")
-	}
 
 	if err := s.UserCredRepo.Create(userCred); err != nil {
 		return err
