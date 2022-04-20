@@ -13,3 +13,5 @@
 
 # credentials and var env
 .env
+
+tmp/
